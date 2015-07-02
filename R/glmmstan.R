@@ -5,6 +5,7 @@ glmmstan <- function(formula_str,data,family="gaussian",center = FALSE,slice = N
                      parallel=FALSE,cores=NULL,iter=2000,warmup = NULL,chains= 2,thin=1){
   
   require("rstan")
+  require("doParallel")
   #formula...Model formula. Using "glmer" notation.
   #data...Data.frame or list.
   #family...Model family name for outcome.
@@ -712,7 +713,6 @@ glmmstan <- function(formula_str,data,family="gaussian",center = FALSE,slice = N
   
   #MCMCsampling
   if(parallel==TRUE && chains > 1){
-    require("doParallel")
     if(nomodel==TRUE){
       stanmodel <- rstan::stan_model(model_name=modelname,model_code=codestan)
       nomodel <- FALSE
