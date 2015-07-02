@@ -712,6 +712,7 @@ glmmstan <- function(formula_str,data,family="gaussian",center = FALSE,slice = N
   
   #MCMCsampling
   if(parallel==TRUE && chains > 1){
+    require("doParallel")
     if(nomodel==TRUE){
       stanmodel <- rstan::stan_model(model_name=modelname,model_code=codestan)
       nomodel <- FALSE
@@ -720,7 +721,6 @@ glmmstan <- function(formula_str,data,family="gaussian",center = FALSE,slice = N
       stanmodel <- stanfit@stanmodel
     }
     cat("\nPreparing parallel process.\n")
-    require("doParallel")
     if(.Platform$OS.type != "windows") {
       cat("\nMCMC sampling start.\n")
       fit.list <- mclapply(1:chains, mc.cores=cores,function(i)
