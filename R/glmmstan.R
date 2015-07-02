@@ -1,5 +1,5 @@
 
-require(rstan)
+
 if(require("doParallel")){
   #cat("doParallel package is loaded correctly")
 }else{
@@ -16,6 +16,8 @@ glmmstan <- function(formula_str,data,family="gaussian",center = FALSE,slice = N
                      stancode=NULL,standata=NULL,stanmodel=NULL,stanfile=NULL,stanfit=NULL,
                      parallel=FALSE,cores=NULL,iter=2000,warmup = NULL,chains= 2,thin=1){
   
+  require("rstan")
+  require("doParallel")
   #formula...Model formula. Using "glmer" notation.
   #data...Data.frame or list.
   #family...Model family name for outcome.
