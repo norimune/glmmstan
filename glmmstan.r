@@ -1,10 +1,21 @@
 
+require(rstan)
+if(require("doParallel")){
+  #cat("doParallel package is loaded correctly")
+}else{
+  cat("tring to install doParallel...")
+  install.packages("doParallel")
+  if(require("doParallel")){
+    cat("doParallel package is loaded correctly")
+  }else{
+    stop("could not install doParallel")
+  }
+}
 glmmstan <- function(formula_str,data,family="gaussian",center = FALSE,slice = NULL,offset=NULL,                     
                      codeonly=FALSE,dataonly=FALSE,modelonly=FALSE,cauchy = 2.5,lkj_corr = 2,
                      stancode=NULL,standata=NULL,stanmodel=NULL,stanfile=NULL,stanfit=NULL,
                      parallel=FALSE,cores=NULL,iter=2000,warmup = NULL,chains= 2,thin=1){
   
-  require("rstan")
   #formula...Model formula. Using "glmer" notation.
   #data...Data.frame or list.
   #family...Model family name for outcome.

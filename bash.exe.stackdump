@@ -1,0 +1,10 @@
+MSYS-1.0.12 Build:2012-07-05 14:56
+Exception: STATUS_ACCESS_VIOLATION at eip=68571E94
+eax=6F642E89 ebx=81E38883 ecx=754CA4F2 edx=00800174 esi=A981E3AF edi=E58681E3
+ebp=68013637 esp=0028FB08 program=C:\Program Files (x86)\Git\bin\bash.exe
+cs=0023 ds=002B es=002B fs=0053 gs=002B ss=002B
+Stack trace:
+Frame     Function  Args
+68013637  68571E94  (E58955C3, 5314EC83, C7085D8B, 204C3843)
+ 460122 [main] bash.exe" 4336 handle_exceptions: Exception: STATUS_ACCESS_VIOLATION
+ 490783 [main] bash.exe" 4336 handle_exceptions: Error while dumping state (probably corrupted stack)
