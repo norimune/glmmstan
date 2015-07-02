@@ -720,7 +720,7 @@ glmmstan <- function(formula_str,data,family="gaussian",center = FALSE,slice = N
       stanmodel <- stanfit@stanmodel
     }
     cat("\nPreparing parallel process.\n")
-    require(doParallel)
+    require("doParallel")
     if(.Platform$OS.type != "windows") {
       cat("\nMCMC sampling start.\n")
       fit.list <- mclapply(1:chains, mc.cores=cores,function(i)
