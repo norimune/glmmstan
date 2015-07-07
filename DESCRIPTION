@@ -1,10 +1,10 @@
 Package: glmmstan
 Type: Package
-Title: Generalized liner mixed model for Rstan.
+Title: What the package does (short line)
 Version: 1.0
-Date: 2015-07-07
-Author: Hiroshi Shimizu
-Maintainer: Hiroshi Shimizu
-Description: Generalized liner mixed model on rstan using glmer-style (lme4) formulas.
-License: GPLv3
-Imports: doParallel,rstan
+Date: 2015-07-02
+Author: Who wrote it
+Maintainer: Who to complain to <yourfault@somewhere.net>
+Description: More about what it does (maybe more than one line)
+License: What license is it under?
+Depends: doParallel,rstan
