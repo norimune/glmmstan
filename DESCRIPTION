@@ -7,4 +7,4 @@ Author: Hiroshi Shimizu(@simizu706)
 Maintainer: Hiroshi Shimizu(simizu706@norimune.net)
 Description: generalized liner mixed model on rstan using glmer-style (lme4) formulas.
 License: GPLv3
-Depends: doParallel,rstan
+Imports: doParallel,rstan
