@@ -5,7 +5,6 @@ glmmstan <- function(formula_str,data,family="gaussian",center = FALSE,slice = N
                      parallel=FALSE,cores=NULL,iter=2000,warmup = NULL,chains= 2,thin=1){
   
   require("rstan")
-  require("doParallel")
   #formula...Model formula. Using "glmer" notation.
   #data...Data.frame or list.
   #family...Model family name for outcome.
@@ -183,13 +182,11 @@ glmmstan <- function(formula_str,data,family="gaussian",center = FALSE,slice = N
     #family <- gsub("]", "", temp[2],fixed=TRUE)
   }
   
-  if(parallel==TRUE){
-    if(is.null(cores)==TRUE){
-      cores <- chains
-    }
-    if(cores>getOption("mc.cores",detectCores())){
-      cores <- getOption("mc.cores",detectCores())
-    }
+  if(is.null(cores)==TRUE){
+    cores <- chains
+  }
+  if(cores>getOption("mc.cores",detectCores())){
+    cores <- getOption("mc.cores",detectCores())
   }
   
   
@@ -747,22 +744,22 @@ glmmstan <- function(formula_str,data,family="gaussian",center = FALSE,slice = N
     #stopCluster(cl)
   }else if(nocode==TRUE && nomodel==TRUE){
     fitstan <- rstan::stan(model_name=modelname,model_code=codestan, data=datastan,
-                           iter=iter, warmup = warmup,chains=chains,thin=thin)   
+                           iter=iter, warmup = warmup,chains=chains,thin=thin,cores=cores)   
   }else{    
     if(nomodel==FALSE){
       fitstan <- rstan::sampling(stanmodel, data=datastan,
-                                 iter=iter, warmup = warmup,chains=chains,thin=thin)
+                                 iter=iter, warmup = warmup,chains=chains,thin=thin,cores=cores)
     }else if(nocode==FALSE){
       if(is.null(family)==TRUE){
         family <- attr(codestan,"family")
       }
       modelname <- paste0(formula_str," [",family,"]")
       fitstan <- rstan::stan(model_name=modelname, model_code=codestan, data=datastan, 
-                             iter=iter, warmup = warmup,chains=chains,thin=thin)
+                             iter=iter, warmup = warmup,chains=chains,thin=thin,cores=cores)
     }else if(nofile==FALSE){
       modelname <- paste0(formula_str," [",family,"]")
       fitstan <- rstan::stan(stanfile,model_name=modelname, data=datastan,
-                             iter=iter, warmup = warmup,chains=chains,thin=thin) 
+                             iter=iter, warmup = warmup,chains=chains,thin=thin,cores=cores) 
     }
   }    
   
