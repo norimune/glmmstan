@@ -398,36 +398,36 @@ glmmstan <- function(formula_str,data,family="gaussian",center = FALSE,slice = N
   if(nocode==TRUE && nomodel==TRUE){  
     
     ###data
-    data_code <- 'data{\n\t\tint<lower=1> N;\n\t\tint<lower=1> P;\n\t\trow_vector[P] x[N];\n'
+    data_code <- 'data{\n\tint<lower=1> N;\n\tint<lower=1> P;\n\trow_vector[P] x[N];\n'
     if(R>0){
-      data_code <- paste0(data_code,"\t\tint<lower=1> R;\n\t\tint<lower=1> G[R];\n\t\tint<lower=1> Q[R];\n" )
+      data_code <- paste0(data_code,"\tint<lower=1> R;\n\tint<lower=1> G[R];\n\tint<lower=1> Q[R];\n" )
     }
-    if(family=="binomial") data_code <- paste0(data_code,"\t\tint<lower=1> bitotal[N];\n" )
-    if(family=="ordered") data_code <- paste0(data_code,"\t\tint<lower=2> K;\n" )
-    if(checkoffset==1) data_code <- paste0(data_code,"\t\treal offset[N];\n" )
+    if(family=="binomial") data_code <- paste0(data_code,"\tint<lower=1> bitotal[N];\n" )
+    if(family=="ordered") data_code <- paste0(data_code,"\tint<lower=2> K;\n" )
+    if(checkoffset==1) data_code <- paste0(data_code,"\treal offset[N];\n" )
       
     temp1 <- ''
     if(family=="gaussian"){
-      temp1 <- ("\t\treal y[N];\n")
+      temp1 <- ("\treal y[N];\n")
     }else if(family=="gamma" || family=="lognormal"){
-      temp1 <- ("\t\treal<lower=0> y[N];\n")
+      temp1 <- ("\treal<lower=0> y[N];\n")
     }else if(family=="bernoulli" ||family=="binomial" || family=="poisson"|| family=="ordered" || family=="nbinomial"){
-      temp1 <- ("\t\tint<lower=0> y[N];\n")
+      temp1 <- ("\tint<lower=0> y[N];\n")
     }else if(family=="beta" ){
-      temp1 <- ("\t\treal<lower=0,upper=1> y[N];\n")
+      temp1 <- ("\treal<lower=0,upper=1> y[N];\n")
     }
     if(R>0){
       for(i in 1:R){
-        temp1 <- paste0(temp1,"\t\t","int<lower=1> ", "id",i,"[N];","\n")
+        temp1 <- paste0(temp1,"\t","int<lower=1> ", "id",i,"[N];","\n")
       }
     }
     temp2 <- ''
     if(R>0){
       for(i in 1:R){
         if(Q[i]==1){
-          temp2 <- paste0(temp2,"\t\t","real", " z",i,"[N];","\n")
+          temp2 <- paste0(temp2,"\t","real", " z",i,"[N];","\n")
         }else{
-          temp2 <- paste0(temp2,"\t\t","row_vector[Q[",i, "]] z",i,"[N];","\n")
+          temp2 <- paste0(temp2,"\t","row_vector[Q[",i, "]] z",i,"[N];","\n")
         }  
       }
     }
@@ -438,11 +438,11 @@ glmmstan <- function(formula_str,data,family="gaussian",center = FALSE,slice = N
     if(R>0){
       temp1 <- ''
       for(i in 1:R){
-        temp1 <- paste0(temp1,"\t\t","vector[Q[",i, "]] mu",i,";\n")
+        temp1 <- paste0(temp1,"\t","vector[Q[",i, "]] mu",i,";\n")
       }
       temp2 <- ''
       for(i in 1:R){
-        temp2 <- paste0(temp2,"\t\t","for(q in 1:Q[",i,"]) mu" ,i,"[q] <- 0;\n")
+        temp2 <- paste0(temp2,"\t","for(q in 1:Q[",i,"]) mu" ,i,"[q] <- 0;\n")
       }
       td_code <- paste0(td_code,temp1,temp2,"}")
     }else{
@@ -450,14 +450,14 @@ glmmstan <- function(formula_str,data,family="gaussian",center = FALSE,slice = N
     }
     
     ###parameters
-    para_code <-'\nparameters{\n\t\tvector[P] beta;\n'
+    para_code <-'\nparameters{\n\tvector[P] beta;\n'
     temp1 <- ''
     if(R>0){
       for(i in 1:R){
         if(Q[i]==1){
-          temp1 <- paste0(temp1,"\t\t","real r",i,"[G[",i,"]];\n")
+          temp1 <- paste0(temp1,"\t","real r",i,"[G[",i,"]];\n")
         }else{
-          temp1 <- paste0(temp1,"\t\t","vector[Q[",i, "]] r",i,"[G[",i,"]];\n")
+          temp1 <- paste0(temp1,"\t","vector[Q[",i, "]] r",i,"[G[",i,"]];\n")
         } 
       }
     }
@@ -466,23 +466,23 @@ glmmstan <- function(formula_str,data,family="gaussian",center = FALSE,slice = N
     if(R>0){
       for(i in 1:R){
         if(Q[i]==1){
-          temp2 <- paste0(temp2,"\t\t","real<lower=0> tau_sd",i,";\n")
+          temp2 <- paste0(temp2,"\t","real<lower=0> tau_sd",i,";\n")
         }else{
-          temp2 <- paste0(temp2,"\t\t","vector<lower=0>[Q[",i, "]] tau_sd",i,";\n")
+          temp2 <- paste0(temp2,"\t","vector<lower=0>[Q[",i, "]] tau_sd",i,";\n")
         } 
       }
       for(i in 1:R){
         if(Q[i]>1){
-          temp2 <- paste0(temp2,"\t\t","corr_matrix[Q[",i, "]] tau_corr",i,";\n")
+          temp2 <- paste0(temp2,"\t","corr_matrix[Q[",i, "]] tau_corr",i,";\n")
         } 
       }
     }
     temp3 <- ''
     if(family == "gaussian" || family == "gamma" || family=="nbinomial" || family=="lognormal" || family=="beta"){
-      temp3 <- paste0("\t\t","real<lower=0> s;\n")
+      temp3 <- paste0("\t","real<lower=0> s;\n")
     }
     if(family=="ordered"){
-      temp3 <- paste0(temp3,"\t\t","ordered[K-1] cutpoints;\n")
+      temp3 <- paste0(temp3,"\t","ordered[K-1] cutpoints;\n")
     }
     para_code <- paste0(para_code,temp1,temp2,temp3,"}")
     
@@ -490,37 +490,37 @@ glmmstan <- function(formula_str,data,family="gaussian",center = FALSE,slice = N
     tp_code <-'\ntransformed parameters{\n'
     temp1 <-''
     if(family == "gaussian" || family == "gamma" || family=="nbinomial" || family=="lognormal" || family=="beta"){
-      temp1 <- paste0(temp1,"\t\t","real<lower=0> sigma;\n")
+      temp1 <- paste0(temp1,"\t","real<lower=0> sigma;\n")
     }
     temp2 <- ''
     if(R>0){
       for(i in 1:R){
         if(Q[i]==1){
-          temp2 <- paste0(temp2,"\t\t","real<lower=0> tau",i,";\n")
+          temp2 <- paste0(temp2,"\t","real<lower=0> tau",i,";\n")
         }else{
-          temp2 <- paste0(temp2,"\t\t","cov_matrix[Q[",i, "]] tau",i,";\n")
+          temp2 <- paste0(temp2,"\t","cov_matrix[Q[",i, "]] tau",i,";\n")
         } 
       }
     }
     temp3 <- ''
     if(family == "gaussian"){
-      temp3 <- paste0(temp3,"\t\tsigma <- s^2;\n")
+      temp3 <- paste0(temp3,"\tsigma <- s^2;\n")
     }else if(family == "gamma"){      
-      temp3 <- paste0(temp3,"\t\tsigma <- 1/s;\n")
+      temp3 <- paste0(temp3,"\tsigma <- 1/s;\n")
     }else if(family == "lognormal"){      
-      temp3 <- paste0(temp3,"\t\tsigma <- s^2;\n")
+      temp3 <- paste0(temp3,"\tsigma <- s^2;\n")
     }else if(family == "nbinomial"){
-      temp3 <- paste0(temp3,"\t\tsigma <- 1/s;\n")
+      temp3 <- paste0(temp3,"\tsigma <- 1/s;\n")
     }else if(family == "beta"){
-      temp3 <- paste0(temp3,"\t\tsigma <- s;\n")
+      temp3 <- paste0(temp3,"\tsigma <- s;\n")
     } 
     temp4 <- ''
     if(R>0){
       for(i in 1:R){
         if(Q[i]==1){
-          temp4 <- paste0(temp4,"\t\t","tau",i," <- tau_sd",i,"^2;\n")
+          temp4 <- paste0(temp4,"\t","tau",i," <- tau_sd",i,"^2;\n")
         }else{
-          temp4 <- paste0(temp4,"\t\ttau",i," <- quad_form_diag(tau_corr",i,",tau_sd",i,");\n")
+          temp4 <- paste0(temp4,"\ttau",i," <- quad_form_diag(tau_corr",i,",tau_sd",i,");\n")
         } 
       }
     }
@@ -529,39 +529,39 @@ glmmstan <- function(formula_str,data,family="gaussian",center = FALSE,slice = N
     
     ###model
     if(family!="beta"){
-      model_code <-'\nmodel{\n\t\treal predict[N];\n\t\tbeta ~ normal(0,1000);\n'
+      model_code <-'\nmodel{\n\treal predict[N];\n\tbeta ~ normal(0,1000);\n'
     }else{
-      model_code <-'\nmodel{\n\t\treal predict[N];\n\t\treal A[N];\n\t\treal B[N];\n\t\tbeta ~ normal(0,1000);\n'
+      model_code <-'\nmodel{\n\treal predict[N];\n\treal A[N];\n\treal B[N];\n\tbeta ~ normal(0,1000);\n'
     }
     
     temp3 <-''
     if(R>0){
       for(i in 1:R){
         if(Q[i]==1){
-          temp3 <- paste0(temp3,"\t\t","for(g in 1:G[",i,"]) r",i,"[g] ~ normal(0, tau_sd",i,");\n")
+          temp3 <- paste0(temp3,"\t","for(g in 1:G[",i,"]) r",i,"[g] ~ normal(0, tau_sd",i,");\n")
         }else{
-          temp3 <- paste0(temp3,"\t\t","r",i," ~ multi_normal(mu",i,",tau",i,");\n")
+          temp3 <- paste0(temp3,"\t","r",i," ~ multi_normal(mu",i,",tau",i,");\n")
         } 
       }
       for(i in 1:R){
         if(Q[i]==1){
-          temp3 <- paste0(temp3,"\t\t","tau_sd",i," ~ cauchy(0,",cauchy,");\n")
+          temp3 <- paste0(temp3,"\t","tau_sd",i," ~ cauchy(0,",cauchy,");\n")
         }else{
-          temp3 <- paste0(temp3,"\t\t","tau_sd",i," ~ cauchy(0,",cauchy,");\n")
+          temp3 <- paste0(temp3,"\t","tau_sd",i," ~ cauchy(0,",cauchy,");\n")
         } 
       }
       for(i in 1:R){
         if(Q[i]>1){
-          temp3 <- paste0(temp3,"\t\t","tau_corr",i," ~ lkj_corr(",lkj_corr,");\n")
+          temp3 <- paste0(temp3,"\t","tau_corr",i," ~ lkj_corr(",lkj_corr,");\n")
         } 
       }
     }
     
     if(family == "gaussian" || family=="lognormal"){
-      temp3 <- paste0(temp3,"\t\t","s ~ cauchy(0,",cauchy,");\n")
+      temp3 <- paste0(temp3,"\t","s ~ cauchy(0,",cauchy,");\n")
     }
         
-    temp1 <- '\t\tfor(n in 1:N){\n\t\t\t\tpredict[n] <- x[n]*beta'
+    temp1 <- '\tfor(n in 1:N){\n\t\tpredict[n] <- x[n]*beta'
     if(R>0){
       for(i in 1:R){
         temp1 <- paste0(temp1,"+z",i,"[n]*r",i,"[id",i,"[n]]")
@@ -570,27 +570,27 @@ glmmstan <- function(formula_str,data,family="gaussian",center = FALSE,slice = N
     temp1 <-paste0(temp1,";\n")
     
     if(family=="binomial"){
-      temp1 <- paste0(temp1,"\t\t\t\tpredict[n] <- inv_logit(predict[n]);\n")
+      temp1 <- paste0(temp1,"\t\tpredict[n] <- inv_logit(predict[n]);\n")
     }else if(family=="poisson"){
       if(checkoffset==0){
-        temp1 <- paste0(temp1,"\t\t\t\tpredict[n] <- exp(predict[n]);\n")
+        temp1 <- paste0(temp1,"\t\tpredict[n] <- exp(predict[n]);\n")
       }else{
-        temp1 <- paste0(temp1,"\t\t\t\tpredict[n] <- offset[n]*exp(predict[n]);\n")
+        temp1 <- paste0(temp1,"\t\tpredict[n] <- offset[n]*exp(predict[n]);\n")
       }      
     }else if(family=="gamma"){
-      temp1 <- paste0(temp1,"\t\t\t\tpredict[n] <- s / exp(predict[n]);\n")
+      temp1 <- paste0(temp1,"\t\tpredict[n] <- s / exp(predict[n]);\n")
     }else if(family=="lognormal"){
       
     }else if(family=="nbinomial" && checkoffset == 1){
-      temp1 <- paste0(temp1,"\t\t\t\tpredict[n] <- log(offset[n])+predict[n];\n")
+      temp1 <- paste0(temp1,"\t\tpredict[n] <- log(offset[n])+predict[n];\n")
     }else if(family=="beta"){
-      temp1 <- paste0(temp1,"\t\t\t\tpredict[n] <- inv_logit(predict[n]);\n")
-      temp1 <- paste0(temp1,"\t\t\t\tA[n] <- predict[n]*s;\n")
-      temp1 <- paste0(temp1,"\t\t\t\tB[n] <- (1.0-predict[n])*s;\n")
+      temp1 <- paste0(temp1,"\t\tpredict[n] <- inv_logit(predict[n]);\n")
+      temp1 <- paste0(temp1,"\t\tA[n] <- predict[n]*s;\n")
+      temp1 <- paste0(temp1,"\t\tB[n] <- (1.0-predict[n])*s;\n")
     }
-    temp1 <-paste0(temp1,"\t\t}\n")
+    temp1 <-paste0(temp1,"\t}\n")
     
-    temp2 <-'\t\t'
+    temp2 <-'\t'
     if(family == "gaussian"){
       temp2 <- paste0(temp2,"y ~ normal(predict, s)")
     }else if(family=="bernoulli"){
@@ -615,21 +615,21 @@ glmmstan <- function(formula_str,data,family="gaussian",center = FALSE,slice = N
     model_code <- paste0(model_code,temp3,temp1,temp2,"}")
     
     #generated quantities
-    gq_code <-'\ngenerated quantities{\n\t\treal predict[N];\n\t\treal log_lik[N];\n'
+    gq_code <-'\ngenerated quantities{\n\treal predict[N];\n\treal log_lik[N];\n'
     temp1 <- ''
     if(R>0){
       for(i in 1:R){
-        temp1 <- paste0(temp1,"\t\treal log_lik",i,"[G[",i,"]];\n")       
+        temp1 <- paste0(temp1,"\treal log_lik",i,"[G[",i,"]];\n")       
       }  
     }  
     if(checkslice>0){
       for(i in 1:checkslice){
-        temp1 <- paste0(temp1,"\t\treal simple",i,"_high;\n")
-        temp1 <- paste0(temp1,"\t\treal simple",i,"_low;\n")
+        temp1 <- paste0(temp1,"\treal simple",i,"_high;\n")
+        temp1 <- paste0(temp1,"\treal simple",i,"_low;\n")
       }
     }  
     
-    temp2 <- '\t\tfor(n in 1:N){\n\t\t\t\tpredict[n] <- x[n]*beta'
+    temp2 <- '\tfor(n in 1:N){\n\t\tpredict[n] <- x[n]*beta'
     if(R>0){
       for(i in 1:R){
         temp2 <- paste0(temp2,"+z",i,"[n]*r",i,"[id",i,"[n]]")
@@ -637,7 +637,7 @@ glmmstan <- function(formula_str,data,family="gaussian",center = FALSE,slice = N
     }  
     temp2 <- paste0(temp2,";\n")
     
-    temp3 <-paste0("\t\t\t\tlog_lik[n] <- ")
+    temp3 <-paste0("\t\tlog_lik[n] <- ")
     if(family == "gaussian"){
       temp3 <- paste0(temp3,"normal_log(y[n], predict[n], s)") 
     }else if(family=="bernoulli"){
@@ -665,24 +665,24 @@ glmmstan <- function(formula_str,data,family="gaussian",center = FALSE,slice = N
     }else if(family=="beta"){
       temp3 <- paste0(temp3,"beta_log(y[n], inv_logit(predict[n])*s, (1.0-inv_logit(predict[n]))*s)")
     }
-    temp3 <- paste0(temp3,";\n\t\t}\n")
+    temp3 <- paste0(temp3,";\n\t}\n")
         
     if(R>0){
       for(i in 1:R){
-        temp3 <- paste0(temp3,"\t\tfor(g in 1:G[",i,"]){\n\t\t\t\tlog_lik",i,"[g] <- ")
+        temp3 <- paste0(temp3,"\tfor(g in 1:G[",i,"]){\n\t\tlog_lik",i,"[g] <- ")
         if(Q[i]==1){
           temp3 <- paste0(temp3,"normal_log(r",i,"[g],0,tau_sd",i,")")
         }else{
           temp3 <- paste0(temp3,"multi_normal_log(r",i,"[g],mu",i,",tau",i,")")
         }
-        temp3 <- paste0(temp3,";\n\t\t}\n")
+        temp3 <- paste0(temp3,";\n\t}\n")
       }
     }
     
     if(checkslice>0){
       for(i in 1:checkslice){
-        temp3 <- paste0(temp3,"\t\tsimple",i,"_high <- beta[",simplenum[i],"]+beta[",intrctnum[i],"]*",round(slicesd,digits=4),";\n")
-        temp3 <- paste0(temp3,"\t\tsimple",i,"_low <- beta[",simplenum[i],"]-beta[",intrctnum[i],"]*",round(slicesd,digits=4),";\n")
+        temp3 <- paste0(temp3,"\tsimple",i,"_high <- beta[",simplenum[i],"]+beta[",intrctnum[i],"]*",round(slicesd,digits=4),";\n")
+        temp3 <- paste0(temp3,"\tsimple",i,"_low <- beta[",simplenum[i],"]-beta[",intrctnum[i],"]*",round(slicesd,digits=4),";\n")
       }
     }
     gq_code <- paste0(gq_code,temp1,temp2,temp3,"}")
