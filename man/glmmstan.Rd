@@ -14,14 +14,8 @@ Type: \tab Package\cr
 Version: \tab 1.0\cr
 Date: \tab 2015-09-30\cr
 License: \tab GPL\cr
-}
-
-}
-\author{
-Hiroshi Shimizu
-}
-\references{
-}
+\author:Hiroshi Shimizu
+\references{}
 \keyword{ package }
 \examples{
 data(baseball)
