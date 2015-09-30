@@ -3,9 +3,41 @@
 ## install
 If you have not install `RStan`, please read [RStan document](https://github.com/stan-dev/rstan/wiki/RStan-Getting-Started) and install it.
 
-After installed {RStan}, run this code:
+After installed {RStan}, run code below:
 
 ```
 library(devtools)
 install_github("norimune/glmmstan")
+```
+# example
+```
+data(baseball)
+
+#"gaussian"
+fit1 <- glmmstan(salary_log~1,data=baseball,family="gaussian")
+output_result(fit1) #output glmm result
+output_stan(fit1) #output summarized stan result (including rhat index)
+print(fit1) #output stan result (same print() in rstan)
+
+#"lognormal" with random effect
+fit2 <- glmmstan(salary~HR+(1+HR|team),data=baseball,family="lognormal")
+output_result(fit2)$WAIC #output only WAIC
+
+#"negative binomial" with offset term
+fit3 <- glmmstan(HR~1,data=baseball,family="nbinomial",offset="ATbats")
+output_result(fit3)$beta #output only coefficients and scale parameters
+
+#"ordered" with centering indipendent variables
+fit4 <- glmmstan(Cluster~salary,data=baseball,family="ordered",center=TRUE)
+output_result(fit4)
+output_code(fit4) #confirm the stan code
+
+#output only stan code, datase, and stan model
+code1 <- glmmstan(HR~1+(1|player),data=baseball,family="poisson",codeonly=TRUE)
+dataset1 <- glmmstan(HR~1+(1|player),data=baseball,family="poisson",dataonly=TRUE)
+model1 <- glmmstan(HR~1+(1|player),data=baseball,family="poisson",modelonly=TRUE)
+
+fit5 <- stan(model_code=code1, data=dataset1)
+fit6 <- sampling(model1,data=dataset1)
+
 ```
