@@ -1,6 +1,5 @@
 \name{glmmstan-package}
 \alias{glmmstan-package}
-\alias{glmmstan}
 \docType{package}
 \title{
 Generalized liner mixed model in Rstan
