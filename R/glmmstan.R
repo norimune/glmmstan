@@ -667,18 +667,6 @@ glmmstan <- function(formula_str,data,family="gaussian",center = FALSE,slice = N
     }
     temp3 <- paste0(temp3,";\n\t}\n")
         
-    if(R>0){
-      for(i in 1:R){
-        temp3 <- paste0(temp3,"\tfor(g in 1:G[",i,"]){\n\t\tlog_lik",i,"[g] <- ")
-        if(Q[i]==1){
-          temp3 <- paste0(temp3,"normal_log(r",i,"[g],0,tau_sd",i,")")
-        }else{
-          temp3 <- paste0(temp3,"multi_normal_log(r",i,"[g],mu",i,",tau",i,")")
-        }
-        temp3 <- paste0(temp3,";\n\t}\n")
-      }
-    }
-    
     if(checkslice>0){
       for(i in 1:checkslice){
         temp3 <- paste0(temp3,"\tsimple",i,"_high <- beta[",simplenum[i],"]+beta[",intrctnum[i],"]*",round(slicesd,digits=4),";\n")
@@ -773,85 +761,6 @@ glmmstan <- function(formula_str,data,family="gaussian",center = FALSE,slice = N
   p_waic <- sum(apply(loglik,2,var))
   waic <- -lppd/N + p_waic/N
   waic2 <- waic * (2*N)
-  
-  ###calculating randome factor version WAIC
-  if(0){
-    beta <- rstan::extract(fitstan,"beta")$beta
-    if(family == "gaussian" || family == "gamma" || family=="nbinomial" || family=="lognormal" || family=="beta"){
-      s <- rstan::extract(fitstan,"s")$s
-    }
-    tempint <- rep(1:1,nrow(beta))
-    p_waic_r <- vector()
-    lppd_r <- vector()
-    r<- list()
-    if(R>0){
-      for(i in 1:R){
-        loglikename <- paste("log_lik",i,sep="")
-        lppd_r[i] <- sum(log(colMeans(exp(rstan::extract(fitstan,loglikename)[loglikename][[1]]))))
-      }
-      lppd_r <- sum(lppd_r)
-      p_waic2<-vector() 
-      for(n in 1:N){
-        temp <- beta%*%t(as.matrix(x[n,]))
-        for(i in 1:R){
-          rname <- paste("r",i,sep="")
-          r <- colMeans(rstan::extract(fitstan,rname)[rname][[1]])
-          if(Q[i]==1){
-            temp <- temp + as.numeric(r[id[[i]][n]]%*%t(z[[i]][n]))
-          }else{
-            temp <- temp + as.numeric(r[id[[i]][n],]%*%t(z[[i]][n,]))
-          }
-        }
-        if(family=="gaussian" || family=="lognormal"){
-          temp <- (temp)
-        }else if(family=="binomial" || family=="beta" || family=="ordered"){
-          temp <- 1/(1+exp(temp))
-        }else{
-          temp <- exp(temp)
-        }
-        if(family=="gaussian"){
-          p_waic2[n] <- var(log(dnorm(tempint*y[n],temp[,1],s)))
-        }else if(family=="binomial"){
-          p_waic2[n] <- var(log(dbinom(tempint*y[n],tempint*bitotal[n],temp[,1])))
-        }else if(family=="poisson"){
-          p_waic2[n] <- var(log(dpois(tempint*y[n],temp[,1])))
-        }else if(family=="nbinomial"){
-          p_waic2[n] <- var(log(dnbinom(tempint*y[n],mu=temp[,1],size=s)))
-        }else if(family=="gamma"){
-          p_waic2[n] <- var(log(dgamma(tempint*y[n],s,temp[,1]*s)))
-        }else if(family=="lognomial"){
-          p_waic2[n] <- var(log(dlnorm(tempint*y[n],temp[,1],s)))
-        }else if(family=="beta"){
-          p_waic2[n] <- var(log(dbeta(tempint*y[n],temp[,1]*s, (1.0-temp[,1]*s))))
-        }else if(family=="bernoulli"){
-          p_waic2[n] <- var(log(dbinom(tempint*y[n],tempint*1,temp[,1])))
-        }
-      }
-      p_waic_r <- sum(p_waic2)
-      for(i in 1:R){
-        p_waic2 <- vector()
-        rname <- paste("r",i,sep="")
-        r <- colMeans(rstan::extract(fitstan,rname)[rname][[1]])
-        if(Q[i]==1){
-          tauname <- paste("tau_sd",i,sep="")
-          tau_sd <- rstan::extract(fitstan,tauname)[tauname][[1]]
-          temp <- 0
-          for(g in 1:G[i]){
-            temp <- temp + var(log(dnorm(tempint*r[g],0,tau_sd)))
-          } 
-        }else{
-          
-        }
-        p_waic_r <- p_waic_r + temp   
-      }
-    }else{
-      lppd_r <- 0
-      p_waic_r <- p_waic
-    }
-    lppd_r <- lppd + lppd_r
-    waic_r <- -2*lppd_r + 2*p_waic_r
-  
-  }
      
   ###calculating beta
   beta <- rstan::extract(fitstan,"beta")$beta
