@@ -1,4 +1,5 @@
-\name{glmmstan}
+\name{glmmstan-package}
+\alias{glmmstan-package}
 \alias{glmmstan}
 \docType{package}
 \title{
