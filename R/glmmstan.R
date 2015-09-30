@@ -490,7 +490,7 @@ glmmstan <- function(formula_str,data,family="gaussian",center = FALSE,slice = N
     tp_code <-'\ntransformed parameters{\n'
     temp1 <-''
     if(family == "gaussian" || family == "gamma" || family=="nbinomial" || family=="lognormal" || family=="beta"){
-      temp1 <- paste0(temp1,"\t","real<lower=0> scale;\n")
+      temp1 <- paste0(temp1,"\t","real<lower=0> __scale;\n")
     }
     temp2 <- ''
     if(R>0){
@@ -504,15 +504,15 @@ glmmstan <- function(formula_str,data,family="gaussian",center = FALSE,slice = N
     }
     temp3 <- ''
     if(family == "gaussian"){
-      temp3 <- paste0(temp3,"\tscale <- s^2;\n")
+      temp3 <- paste0(temp3,"\t__scale <- s^2;\n")
     }else if(family == "gamma"){      
-      temp3 <- paste0(temp3,"\tscale <- 1/s;\n")
+      temp3 <- paste0(temp3,"\t__scale <- 1/s;\n")
     }else if(family == "lognormal"){      
-      temp3 <- paste0(temp3,"\tscale <- s^2;\n")
+      temp3 <- paste0(temp3,"\t__scale <- s^2;\n")
     }else if(family == "nbinomial"){
-      temp3 <- paste0(temp3,"\tscale <- 1/s;\n")
+      temp3 <- paste0(temp3,"\t__scale <- 1/s;\n")
     }else if(family == "beta"){
-      temp3 <- paste0(temp3,"\tscale <- s;\n")
+      temp3 <- paste0(temp3,"\t__scale <- s;\n")
     } 
     temp4 <- ''
     if(R>0){
@@ -859,7 +859,7 @@ glmmstan <- function(formula_str,data,family="gaussian",center = FALSE,slice = N
   rownames(beta_com) <- colnames(x)
   colnames(beta_com) <- c("coefficient","stdev","95%lower","95%upper")
   if(family=="gaussian" ||family=="gamma"|| family=="nbinomial" || family=="lognormal" || family=="beta"){
-    s <- rstan::extract(fitstan,"scale")$scale
+    s <- rstan::extract(fitstan,"__scale")$__scale
     scale <- matrix(c(mean(s),sd(s),quantile(s,0.025),quantile(s,0.975)),ncol=4)
     rownames(scale) <- "__scale"
     beta <- rbind(beta_com,scale)
