@@ -3,7 +3,10 @@
 ## install
 If you have not install `RStan`, please read [RStan document](https://github.com/stan-dev/rstan/wiki/RStan-Getting-Started) and install it.
 
-After installed {RStan}, run code below:
+And you need `devtools` to install glmmstan package.
+if you have not install `devtools`, please install it. 
+
+After install these packages, excute the following in R:
 
 ```
 library(devtools)
