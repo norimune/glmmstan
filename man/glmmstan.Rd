@@ -1,4 +1,4 @@
-\name{glmemstan}
+\name{glmmstan}
 \alias{glmmstan}
 \title{Generalized liner mixed model in Rstan using glmer-stype formulas}
 \description{
@@ -15,19 +15,19 @@ glmmstan(formula_str, data, family="gaussian",
 }
 \arguments{
   \item{formula_str}{Model formula or list of formulas, using \code{\link{glmer}} notation for varying effects.}
-  \item{data}{Data frame or list}
+  \item{data}{Data frame or list.}
   \item{family}{Model family name or list of names for outcome(s). Valid choices are: "gaussian", "binomial" (logit link), "poisson" (log link), "nbinomial" (log link),"gamma" (log link), "beta" (logitlinks), "lognormal" (log link),"ordered" (cumulative logit).}
-  \item{center}{If TRUE, center the independent variables(set means=0)}
+  \item{center}{If TRUE, center the independent variables(set means=0).}
   \item{offset}{Input offset term in model(only "poisson","nbinomial").}
-  \item{codeonly}{If TRUE, output only stan code}
-  \item{dataonly}{If TRUE, output only dataset for stan}
-  \item{modelonly}{If TRUE, output only compiled stanmodel}
-  \item{cauchy}{Scale parameters of cauchy distribution which is prior distribution of variance components}
-  \item{parallel}{If TRUE, run the stanmodel in parallel using doparallel package}
-  \item{cores}{Number of cores to use when executing the chains in parallel}
-  \item{iter}{rstan parameter: total number of samples, including warmup}
-  \item{warmup}{rstan parameter: number of adaptation samples}
-  \item{chains}{rstan parameter: number of chains}
+  \item{codeonly}{If TRUE, output only stan code.}
+  \item{dataonly}{If TRUE, output only dataset for stan.}
+  \item{modelonly}{If TRUE, output only compiled stanmodel.}
+  \item{cauchy}{Scale parameters of cauchy distribution which is prior distribution of variance components.}
+  \item{parallel}{If TRUE, run the stanmodel in parallel using doparallel package.}
+  \item{cores}{Number of cores to use when executing the chains in parallel.}
+  \item{iter}{rstan parameter: total number of samples, including warmup.}
+  \item{warmup}{rstan parameter: number of adaptation samples.}
+  \item{chains}{rstan parameter: number of chains.}
   \item{thin}{rstan parameter: A positive integer specifying the period for saving sample.}
 }
 \author{Hiroshi Shimizu}
