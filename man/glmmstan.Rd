@@ -11,7 +11,7 @@ glmmstan(formula_str, data, family="gaussian",
     cauchy=2.5, lkj_corr=2,
     stancode=NULL, standata=NULL, stanmodel=NULL, stanfile=NULL, stanfit=NULL,
     parallel=FALSE, cores=NULL,
-    iter=2000, warmup = NULL, chains= 2, thin=1){
+    iter=2000, warmup = NULL, chains= 2, thin=1)
 }
 \arguments{
   \item{formula_str}{Model formula or list of formulas, using \code{\link{glmer}} notation for varying effects.}
