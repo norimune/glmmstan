@@ -6,7 +6,7 @@ If you have not install `RStan`, please read [RStan document](https://github.com
 And you need `devtools` to install `glmmstan` from GitHub.
 
 ```
-install.package("devtools")
+install.packages("devtools")
 ```
 
 After install these packages, excute the following in R:
