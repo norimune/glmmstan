@@ -2,3 +2,6 @@
 .Rhistory
 .RData
 .Rprofile
+.Rproj
+.stackdump
+.gitignore
