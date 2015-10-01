@@ -3,8 +3,11 @@
 ## install
 If you have not install `RStan`, please read [RStan document](https://github.com/stan-dev/rstan/wiki/RStan-Getting-Started) and install it.
 
-And you need `devtools` to install glmmstan package.
-if you have not install `devtools`, please install it. 
+And you need `devtools` to install `glmmstan` from GitHub.
+
+```
+install.package("devtools")
+```
 
 After install these packages, excute the following in R:
 
@@ -12,7 +15,7 @@ After install these packages, excute the following in R:
 library(devtools)
 install_github("norimune/glmmstan")
 ```
-# example
+## example
 ```
 data(baseball)
 
