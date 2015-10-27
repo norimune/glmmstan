@@ -1,3 +1,6 @@
+library("rstan")
+rstan_options(auto_write = TRUE)
+options(mc.cores = parallel::detectCores())
 
 glmmstan <- function(formula_str,data,family="gaussian",center = FALSE,slice = NULL,offset=NULL,                     
                      codeonly=FALSE,dataonly=FALSE,modelonly=FALSE,cauchy = 2.5,lkj_corr = 2,
@@ -5,10 +8,8 @@ glmmstan <- function(formula_str,data,family="gaussian",center = FALSE,slice = N
                      parallel=FALSE,cores=NULL,iter=2000,warmup = NULL,chains= 2,thin=1){
   
   require("rstan")
-  require("doParallel")
-  require("parallel")
-  rstan_options(auto_write = TRUE)
-  options(mc.cores = parallel::detectCores())
+  library("doParallel")
+  
   #formula...Model formula. Using "glmer" notation.
   #data...Data.frame or list.
   #family...Model family name for outcome.
