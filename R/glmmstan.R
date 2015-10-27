@@ -6,6 +6,7 @@ glmmstan <- function(formula_str,data,family="gaussian",center = FALSE,slice = N
   
   require("rstan")
   require("doParallel")
+  require("parallel")
   rstan_options(auto_write = TRUE)
   options(mc.cores = parallel::detectCores())
   #formula...Model formula. Using "glmer" notation.
