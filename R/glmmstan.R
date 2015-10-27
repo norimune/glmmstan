@@ -622,11 +622,6 @@ glmmstan <- function(formula_str,data,family="gaussian",center = FALSE,slice = N
     #generated quantities
     gq_code <-'\ngenerated quantities{\n\treal predict[N];\n\treal log_lik[N];\n'
     temp1 <- ''
-    if(R>0){
-      for(i in 1:R){
-        temp1 <- paste0(temp1,"\treal log_lik",i,"[G[",i,"]];\n")       
-      }  
-    }  
     if(checkslice>0){
       for(i in 1:checkslice){
         temp1 <- paste0(temp1,"\treal simple",i,"_high;\n")
