@@ -5,6 +5,9 @@ glmmstan <- function(formula_str,data,family="gaussian",center = FALSE,slice = N
                      parallel=FALSE,cores=NULL,iter=2000,warmup = NULL,chains= 2,thin=1){
   
   require("rstan")
+  require("doParallel")
+  rstan_options(auto_write = TRUE)
+  options(mc.cores = parallel::detectCores())
   #formula...Model formula. Using "glmer" notation.
   #data...Data.frame or list.
   #family...Model family name for outcome.
@@ -189,7 +192,6 @@ glmmstan <- function(formula_str,data,family="gaussian",center = FALSE,slice = N
     cores <- getOption("mc.cores",detectCores())
   }
   
-  
   #####################
   ###variable names####
   #####################
@@ -215,7 +217,8 @@ glmmstan <- function(formula_str,data,family="gaussian",center = FALSE,slice = N
     totalname  <- "(bitotal)"
   }    
   zname <- list()
-  if ( formula != nobars(formula) ) {
+  
+  if ( nchar(formula[3]) != nchar(nobars(formula)[3]) ) {
     zformula <- findbars(formula)
     for ( i in 1:length(zformula) ) {    
       idname <- all.vars( zformula[[i]][[3]])    
@@ -302,7 +305,7 @@ glmmstan <- function(formula_str,data,family="gaussian",center = FALSE,slice = N
       stop("Offse variable is not found in the data")
     }
   }
-    
+  
   ######################
   ###creating dataset###
   ######################
@@ -390,7 +393,7 @@ glmmstan <- function(formula_str,data,family="gaussian",center = FALSE,slice = N
   if(dataonly==TRUE){
     return(datastan)
   }
-
+  
   ##########################
   ####creating stan code####
   ##########################
