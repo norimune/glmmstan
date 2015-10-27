@@ -628,7 +628,6 @@ glmmstan <- function(formula_str,data,family="gaussian",center = FALSE,slice = N
         temp1 <- paste0(temp1,"\treal simple",i,"_low;\n")
       }
     }  
-    
     temp2 <- '\tfor(n in 1:N){\n\t\tpredict[n] <- x[n]*beta'
     if(R>0){
       for(i in 1:R){
