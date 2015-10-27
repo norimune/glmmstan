@@ -2,7 +2,6 @@ library("rstan")
 rstan_options(auto_write = TRUE)
 options(mc.cores = parallel::detectCores())
 
-
 glmmstan <- function(formula_str,data,family="gaussian",center = FALSE,slice = NULL,offset=NULL,                     
                      codeonly=FALSE,dataonly=FALSE,modelonly=FALSE,cauchy = 2.5,lkj_corr = 2,
                      stancode=NULL,standata=NULL,stanmodel=NULL,stanfile=NULL,stanfit=NULL,
