@@ -5,6 +5,6 @@ Version: 1.01
 Date: 2015-10-25
 Author: Hiroshi Shimizu
 Maintainer: Hiroshi Shimizu <simizu706@norimune.net>
-Description: Generalized liner mixed model in Rstan using glmer-stype formulas
+Description: Generalized liner mixed model in Rstan using glmer-style formulas
 License: GPLv3
 Depends: rstan
