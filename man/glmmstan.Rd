@@ -1,6 +1,6 @@
 \name{glmmstan}
 \alias{glmmstan}
-\title{Generalized liner mixed model in Rstan using glmer-stype formulas}
+\title{Generalized liner mixed model in Rstan using glmer-style formulas}
 \description{
   Using standard formula notation from \code{glmer} (\code{lme4}), defines a Stan model (\code{rstan}) and optionally samples from the posterior. Can optionally compute WAIC. Supports model families: "gaussian", "binomial", "poisson", "negative binomial", "beta", "gamma", "lognormal" and "ordered". 
 }
