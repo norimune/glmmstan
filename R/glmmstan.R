@@ -618,7 +618,7 @@ glmmstan <- function(formula_str,data,family="gaussian",center = FALSE,slice = N
     
     model_code <- paste0(model_code,temp3,temp1,temp2,"}")
     
-    #generated quantities
+    ###generated quantities
     gq_code <-'\ngenerated quantities{\n\treal predict[N];\n\treal log_lik[N];\n'
     temp1 <- ''
     if(checkslice>0){
