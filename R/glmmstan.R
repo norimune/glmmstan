@@ -219,7 +219,6 @@ glmmstan <- function(formula_str,data,family="gaussian",center = FALSE,slice = N
     totalname  <- "(bitotal)"
   }    
   zname <- list()
-  
   if ( nchar(formula[3]) != nchar(nobars(formula)[3]) ) {
     zformula <- findbars(formula)
     for ( i in 1:length(zformula) ) {    
