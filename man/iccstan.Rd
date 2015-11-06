@@ -1,5 +1,5 @@
 \name{iccstan}
-\alias{glmmstan}
+\alias{iccstan}
 \title{intra-class correlations in rstan}
 \description{
   calculating intra-class correlations(ICC) in rstan. 
