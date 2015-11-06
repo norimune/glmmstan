@@ -1,8 +1,8 @@
 Package: glmmstan
 Type: Package
 Title: Generalized liner mixed model in Rstan
-Version: 1.01
-Date: 2015-10-25
+Version: 1.10
+Date: 2015-11-06
 Author: Hiroshi Shimizu
 Maintainer: Hiroshi Shimizu <simizu706@norimune.net>
 Description: Generalized liner mixed model in Rstan using glmer-style formulas
