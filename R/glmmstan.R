@@ -969,3 +969,8 @@ Pglmmstan <- function(formula_str,data,family="gaussian",center = FALSE,slice = 
            stancode=stancode,standata=standata,stanmodel=stanmodel,stanfile=stanfile,stanfit=stanfit,
            parallel=TRUE,cores=cores,iter=iter,warmup = warmup,chains= chains,thin=thin)
 }
+
+map_mcmc <- function(z){
+  density(z)$x[which.max(density(z)$y)]
+}
+
