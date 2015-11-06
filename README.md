@@ -46,4 +46,10 @@ model1 <- glmmstan(HR~1+(1|player),data=baseball,family="poisson",modelonly=TRUE
 fit5 <- stan(model_code=code1, data=dataset1)
 fit6 <- sampling(model1,data=dataset1)
 
+#intra-class correlations
+model <- iccmodel()
+y <- subset(baseball,select=c(HR,HIT))
+fit7 <- iccstan(y,baseball$team,model=model)
+output_icc(fit7)
+
 ```
