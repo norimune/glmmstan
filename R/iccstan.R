@@ -1,4 +1,4 @@
-iccstan <- function(y,group,model=NULL,iter=4000,warmup=NULL,chains=2,thin=1,cores=NULL,parallel=TRUE){
+iccstan <- function(y,group,model=NULL,iter=2000,warmup=NULL,chains=2,thin=1,cores=NULL,parallel=TRUE){
   library("doParallel")
   
   data <- iccdata(y,group)
