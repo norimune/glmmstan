@@ -297,13 +297,13 @@ glmmstan <- function(formula_str,data,family="gaussian",center = FALSE,slice = N
   ###offset variable
   checkoffset <- 0
   if(is.null(offset)==FALSE){
-    for(i in 1:length(names(dat))){
-      if(names(dat)[i]==offset){
+    for(i in 1:length(names(data))){
+      if(names(data)[i]==offset){
         checkoffset <- 1
       }
     }
     if(checkoffset==0){
-      stop("Offse variable is not found in the data")
+      stop("Offset variable is not found in the data")
     }
   }
   
