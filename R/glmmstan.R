@@ -963,9 +963,9 @@ output_tausd <- function(fitstan,variname=NULL){
       if(idname[i]==variname) idnum <- i
     }
   }else{
-    idname = 1
+    idnum = 1
   }
-  paraname <- paste("tau_sd",i,sep="")
+  paraname <- paste("tau_sd",idnum,sep="")
   tausd <- as.data.frame(rstan::extract(fitstan,paraname)[paraname])
   colnames(tausd) <- attr(fitstan,"dataname")$zname[[idnum]]
   return(tausd)
