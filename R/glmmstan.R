@@ -949,6 +949,11 @@ output_beta <- function(fitstan){
   family <- attr(fitstan,"family")
   beta <- as.data.frame(rstan::extract(fitstan,"beta")$beta)
   colnames(beta) <- attr(fitstan,"dataname")$xname
+  for(i in 1:length(colnames(beta))){
+    if(colnames(beta)[i]=="(Intercept)"){
+      colnames(beta)[i] <- "Intercept"
+    }
+  }
   if(family=="gaussian" ||family=="gamma"|| family=="nbinomial"||family=="lognormal"){
     beta$scale <- rstan::extract(fitstan,"scale")$scale
   }
