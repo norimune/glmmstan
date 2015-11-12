@@ -956,10 +956,14 @@ output_beta <- function(fitstan){
 }
 
 output_tausd <- function(fitstan,variname=NULL){
-  if(is.null(variname)) stop(paste0("Please input random effect's name"))
   idname <- attr(fitstan,"dataname")$idname
-  for(i in 1:length(idname)){
-    if(idname[i]==variname) idnum <- i
+  if(length(idname)>1){
+    if(is.null(variname)) stop(paste0("Please input random effect's name"))
+    for(i in 1:length(idname)){
+      if(idname[i]==variname) idnum <- i
+    }
+  }else{
+    idname = 1
   }
   paraname <- paste("tau_sd",i,sep="")
   tausd <- as.data.frame(rstan::extract(fitstan,paraname)[paraname])
