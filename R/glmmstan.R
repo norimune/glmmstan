@@ -955,8 +955,8 @@ output_beta <- function(fitstan){
   return(beta)
 }
 
-output_tausd <- function(fitstan,variname){
-  if(is.null(variname)) cat("Please input random effect's name")
+output_tausd <- function(fitstan,variname=NULL){
+  if(is.null(variname)) stop(paste0("Please input random effect's name"))
   idname <- attr(fitstan,"dataname")$idname
   for(i in 1:length(idname)){
     if(idname[i]==variname) idnum <- i
