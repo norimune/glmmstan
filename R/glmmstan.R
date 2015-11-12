@@ -895,6 +895,7 @@ glmmstan <- function(formula_str,data,family="gaussian",center = FALSE,slice = N
     }
   }
   
+  attr(fitstan,"family")<-c("family"=family)
   attr(fitstan,"paraname")<-c("paraname"=paraname)
   attr(fitstan,"WAIC") <-c("WAIC"=waic2,"lppd"=lppd,"p_waic" = p_waic)#,"waic_random"=waic_r,"lppd_random"=lppd_r,"p_waic_random"=p_waic_r)
   attr(fitstan,"dataname") <- list("yname"=yname,"xname"=xname,"zname"=zname,"idname"=idname)
@@ -945,6 +946,7 @@ output_result <- function(fitstan){
 }
 
 output_beta <- function(fitstan){
+  family <- attr(fitstan,"family")
   beta <- as.data.frame(rstan::extract(fitstan,"beta")$beta)
   colnames(beta) <- attr(fitstan,"dataname")$xname
   if(family=="gaussian" ||family=="gamma"|| family=="nbinomial"||family=="lognormal"){
@@ -953,10 +955,11 @@ output_beta <- function(fitstan){
   return(beta)
 }
 
-output_tausd <- function(fitstan,z){
+output_tausd <- function(fitstan,variname){
+  if(is.null(variname)) cat("Please input random effect's name")
   idname <- attr(fitstan,"dataname")$idname
   for(i in 1:length(idname)){
-    if(idname[i]==z) idnum <- i
+    if(idname[i]==variname) idnum <- i
   }
   paraname <- paste("tau_sd",i,sep="")
   tausd <- as.data.frame(rstan::extract(fitstan,paraname)[paraname])
