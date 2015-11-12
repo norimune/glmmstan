@@ -695,6 +695,7 @@ glmmstan <- function(formula_str,data,family="gaussian",center = FALSE,slice = N
   }
   
   #MCMCsampling
+  cat("\nCompiling the stan code.\n")
   if(parallel==TRUE && chains > 1){
     if(nomodel==TRUE){
       stanmodel <- rstan::stan_model(model_name=modelname,model_code=codestan)
@@ -941,6 +942,26 @@ output_result <- function(fitstan){
   tau <- attr(fitstan,"tau")
   result <- c(formula,WAIC,beta,simple,tau_sd,taucorr,tau)
   return(result)
+}
+
+output_beta <- function(fitstan){
+  beta <- as.data.frame(rstan::extract(fitstan,"beta")$beta)
+  colnames(beta) <- attr(fitstan,"dataname")$xname
+  if(family=="gaussian" ||family=="gamma"|| family=="nbinomial"||family=="lognormal"){
+    beta$scale <- rstan::extract(fitstan,"scale")$scale
+  }
+  return(beta)
+}
+
+output_tausd <- function(fitstan,z){
+  idname <- attr(fitstan,"dataname")$idname
+  for(i in 1:length(idname)){
+    if(idname[i]==z) idnum <- i
+  }
+  paraname <- paste("tau_sd",i,sep="")
+  tausd <- as.data.frame(rstan::extract(fitstan,paraname)[paraname])
+  colnames(tausd) <- attr(fitstan,"dataname")$zname[[idnum]]
+  return(tausd)
 }
 
 output_ggmcmc <- function(fitstan,para="null"){
