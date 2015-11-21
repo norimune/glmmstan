@@ -695,14 +695,14 @@ glmmstan <- function(formula_str,data,family="gaussian",center = FALSE,slice = N
       }else{
         temp4 <- paste0(temp4,"\t\t\t\tfor(j in 1:Q[1]) zn[j,i] <- z1[count][j];\n")
       }
-      temp4 <- paste0(temp4,"\t\t\t\tsn[i] <- scale;\n\t\t\t{\n")
+      temp4 <- paste0(temp4,"\t\t\t\tsn[i] <- scale;\n\t\t\t}\n")
       if(Q[1]==1){
         temp4 <- paste0(temp4,"\t\t\ttaun <- zn*tau1*zn'+diag_matrix(sn);\n")
       }else{
         temp4 <- paste0(temp4,"\t\t\ttaun <- zn'*tau1*zn+diag_matrix(sn);\n")
       }
       temp4 <- paste0(temp4,"\t\t\tlog_lik_g[g] <- multi_normal_log(yn,predictn,taun);\n")
-      temp4 <- paste0(temp4,"\t\t{\n\t{\n")
+      temp4 <- paste0(temp4,"\t\t}\n\t}\n")
     }
     gq_code <- paste0(gq_code,temp1,temp2,temp3,temp4,"}")
     
