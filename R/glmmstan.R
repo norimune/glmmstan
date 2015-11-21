@@ -995,7 +995,11 @@ output_result <- function(fitstan){
   tau_sd <- attr(fitstan,"tau_sd")
   taucorr <- attr(fitstan,"taucorr")
   tau <- attr(fitstan,"tau")
-  result <- c(formula,WAIC,beta,simple,tau_sd,taucorr,tau)
+  if(attr(fitstan,"global")==TRUE){
+    result <- c(formula,WAIC,WAIC_g,beta,simple,tau_sd,taucorr,tau)
+  }else{
+    result <- c(formula,WAIC,beta,simple,tau_sd,taucorr,tau)
+  }
   return(result)
 }
 
