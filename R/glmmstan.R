@@ -389,7 +389,7 @@ glmmstan <- function(formula_str,data,family="gaussian",center = FALSE,slice = N
     if(family=="ordered") datastan$K <- K
     if(checkoffset==1) datastan$offset <- offsetdata[,]  
     if(checkslice>0) slicesd <- sd(dat3[slice][,])
-    if(family=="gaussian"||R=1) datastan$idn1 <- as.vector(table(datastan$id1))
+    if(family=="gaussian"||R==1) datastan$idn1 <- as.vector(table(datastan$id1))
   }
   
   if(dataonly==TRUE){
@@ -436,7 +436,7 @@ glmmstan <- function(formula_str,data,family="gaussian",center = FALSE,slice = N
         }  
       }
     }
-    if(family=="gaussian"||R=1) temp2 <- paste0(temp2,"\t","int idn1[G[1]];\n")
+    if(family=="gaussian"||R==1) temp2 <- paste0(temp2,"\t","int idn1[G[1]];\n")
     data_code <- paste0(data_code,temp1,temp2,"}")
     
     ###transformed data    
