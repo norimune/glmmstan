@@ -389,7 +389,7 @@ glmmstan <- function(formula_str,data,family="gaussian",center = FALSE,slice = N
     if(family=="ordered") datastan$K <- K
     if(checkoffset==1) datastan$offset <- offsetdata[,]  
     if(checkslice>0) slicesd <- sd(dat3[slice][,])
-    if(family=="gaussian"||R==1) datastan$idn1 <- as.vector(table(datastan$id1))
+    if(family=="gaussian" && R==1) datastan$idn1 <- as.vector(table(datastan$id1))
   }
   
   if(dataonly==TRUE){
@@ -436,7 +436,7 @@ glmmstan <- function(formula_str,data,family="gaussian",center = FALSE,slice = N
         }  
       }
     }
-    if(family=="gaussian"||R==1) temp2 <- paste0(temp2,"\t","int idn1[G[1]];\n")
+    if(family=="gaussian" && R==1) temp2 <- paste0(temp2,"\t","int idn1[G[1]];\n")
     data_code <- paste0(data_code,temp1,temp2,"}")
     
     ###transformed data    
@@ -622,7 +622,7 @@ glmmstan <- function(formula_str,data,family="gaussian",center = FALSE,slice = N
     
     ###generated quantities
     gq_code <-'\ngenerated quantities{\n\treal predict[N];\n\treal log_lik[N];\n'
-    if(family=="gaussian"||R==1) gq_code <- paste0(gq_code,"real log_lik_g[G[1]];\nint count;\n")
+    if(family=="gaussian" && R==1) gq_code <- paste0(gq_code,"\treal log_lik_g[G[1]];\n\tint count;\n")
     temp1 <- ''
     if(checkslice>0){
       for(i in 1:checkslice){
@@ -675,7 +675,7 @@ glmmstan <- function(formula_str,data,family="gaussian",center = FALSE,slice = N
       }
     }
     temp4 <- ''
-    if(family=="gaussian"||R==1){
+    if(family=="gaussian" && R==1){
       temp4 <- paste0(temp4,"\tcount <- 0;\n\tfor(g in 1:G[1]){\n\t\t{\n")
       temp4 <- paste0(temp4,"\t\t\tvector[idn1[g]] yn;\n")
       temp4 <- paste0(temp4,"\t\t\tvector[idn1[g]] predictn;\n")
@@ -795,7 +795,7 @@ glmmstan <- function(formula_str,data,family="gaussian",center = FALSE,slice = N
   waic2 <- waic * (2*N)
   
   ###calculating global parameter WAIC
-  if(family=="gaussian"||R==1){
+  if(family=="gaussian" && R==1){
     loglik_g <- rstan::extract(fitstan,"log_lik_g")$log_lik_g
     lppd_g <- sum(log(colMeans(exp(loglik_g))))
     p_waic_g <- sum(apply(loglik_g,2,var))
@@ -940,7 +940,7 @@ glmmstan <- function(formula_str,data,family="gaussian",center = FALSE,slice = N
   attr(fitstan,"family")<-c("family"=family)
   attr(fitstan,"paraname")<-c("paraname"=paraname)
   attr(fitstan,"WAIC") <-c("WAIC"=waic2,"lppd"=lppd,"p_waic" = p_waic)
-  if(family=="gaussian"||R==1){
+  if(family=="gaussian" && R==1){
     attr(fitstan,"WAIC_g") <-c("WAIC_g"=waic2_g,"lppd_g"=lppd_g,"p_waic_g" = p_waic_g)
   }
   attr(fitstan,"dataname") <- list("yname"=yname,"xname"=xname,"zname"=zname,"idname"=idname)
@@ -955,7 +955,7 @@ glmmstan <- function(formula_str,data,family="gaussian",center = FALSE,slice = N
   if(checkslice>0){
     attr(fitstan,"simple")<-list("simple"=simple) 
   }
-  if(family=="gaussian"||R==1){
+  if(family=="gaussian" && R==1){
     attr(fitstan,"global") <- TRUE
   }else{
     attr(fitstan,"global") <- FALSE
