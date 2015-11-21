@@ -388,7 +388,8 @@ glmmstan <- function(formula_str,data,family="gaussian",center = FALSE,slice = N
     if(family=="binomial") datastan$bitotal <- bitotal
     if(family=="ordered") datastan$K <- K
     if(checkoffset==1) datastan$offset <- offsetdata[,]  
-    if(checkslice>0) slicesd <- sd(dat3[slice][,])      
+    if(checkslice>0) slicesd <- sd(dat3[slice][,])
+    if(family=="gaussian"||R=1) datastan$idn1 <- as.vector(table(datastan$id1))
   }
   
   if(dataonly==TRUE){
@@ -435,6 +436,7 @@ glmmstan <- function(formula_str,data,family="gaussian",center = FALSE,slice = N
         }  
       }
     }
+    if(family=="gaussian"||R=1) temp2 <- paste0(temp2,"\t","int idn1[G[1]];\n")
     data_code <- paste0(data_code,temp1,temp2,"}")
     
     ###transformed data    
@@ -620,6 +622,7 @@ glmmstan <- function(formula_str,data,family="gaussian",center = FALSE,slice = N
     
     ###generated quantities
     gq_code <-'\ngenerated quantities{\n\treal predict[N];\n\treal log_lik[N];\n'
+    if(family=="gaussian"||R==1) gq_code <- paste0(gq_code,"real log_lik_g[G[1]];\nint count;\n")
     temp1 <- ''
     if(checkslice>0){
       for(i in 1:checkslice){
@@ -671,7 +674,37 @@ glmmstan <- function(formula_str,data,family="gaussian",center = FALSE,slice = N
         temp3 <- paste0(temp3,"\tsimple",i,"_low <- beta[",simplenum[i],"]-beta[",intrctnum[i],"]*",round(slicesd,digits=4),";\n")
       }
     }
-    gq_code <- paste0(gq_code,temp1,temp2,temp3,"}")
+    temp4 <- ''
+    if(family=="gaussian"||R==1){
+      temp4 <- paste0(temp4,"\tcount <- 0;\n\tfor(g in 1:G[1]){\n\t\t{\n")
+      temp4 <- paste0(temp4,"\t\t\tvector[idn1[g]] yn;\n")
+      temp4 <- paste0(temp4,"\t\t\tvector[idn1[g]] predictn;\n")
+      if(Q[1]==1){
+        temp4 <- paste0(temp4,"\t\t\tvector[idn1[g]] zn;\n")
+      }else{
+        temp4 <- paste0(temp4,"\t\t\tmatrix[Q[1],idn1[g]] zn;\n")
+      }
+      temp4 <- paste0(temp4,"\t\t\tvector[idn1[g]] sn;\n")
+      temp4 <- paste0(temp4,"\t\t\tmatrix[idn1[g],idn1[g]] taun;\n")
+      temp4 <- paste0(temp4,"\t\t\tfor(i in 1:idn1[g]){\n")
+      temp4 <- paste0(temp4,"\t\t\t\tcount <- count + 1;\n")
+      temp4 <- paste0(temp4,"\t\t\t\tyn[i] <- y[count];\n")
+      temp4 <- paste0(temp4,"\t\t\t\tpredictn[i] <- x[count]*beta;\n")
+      if(Q[1]==1){
+        temp4 <- paste0(temp4,"\t\t\t\tzn[i] <- z1[count];\n")
+      }else{
+        temp4 <- paste0(temp4,"\t\t\t\tfor(j in 1:Q[1]) zn[j,i] <- z1[count][j];\n")
+      }
+      temp4 <- paste0(temp4,"\t\t\t\tsn[i] <- scale;\n\t\t\t{\n")
+      if(Q[1]==1){
+        temp4 <- paste0(temp4,"\t\t\ttaun <- zn*tau1*zn'+diag_matrix(sn);\n")
+      }else{
+        temp4 <- paste0(temp4,"\t\t\ttaun <- zn'*tau1*zn+diag_matrix(sn);\n")
+      }
+      temp4 <- paste0(temp4,"\t\t\tlog_lik_g[g] <- multi_normal_log(yn,predictn,taun);\n")
+      temp4 <- paste0(temp4,"\t\t\{\n\t{\n")
+    }
+    gq_code <- paste0(gq_code,temp1,temp2,temp3,temp4,"}")
     
     codestan <- paste(data_code,td_code,para_code,tp_code,model_code,gq_code,"\n")    
   }else if(nomodel==FALSE){
@@ -760,7 +793,16 @@ glmmstan <- function(formula_str,data,family="gaussian",center = FALSE,slice = N
   p_waic <- sum(apply(loglik,2,var))
   waic <- -lppd/N + p_waic/N
   waic2 <- waic * (2*N)
-     
+  
+  ###calculating global parameter WAIC
+  if(family=="gaussian"||R==1){
+    loglik_g <- rstan::extract(fitstan,"log_lik_g")$log_lik_g
+    lppd_g <- sum(log(colMeans(exp(loglik_g))))
+    p_waic_g <- sum(apply(loglik_g,2,var))
+    waic_g <- -lppd_g/G[1] + p_waic_g/G[1]
+    waic2_g <- waic_g * (2*G[1])
+  }
+  
   ###calculating beta
   beta <- rstan::extract(fitstan,"beta")$beta
   beta_com <- matrix(c(apply(beta,2,mean),apply(beta,2,sd),apply(beta,2,quantile,0.025),apply(beta,2,quantile,0.975)),ncol=4)
@@ -897,7 +939,10 @@ glmmstan <- function(formula_str,data,family="gaussian",center = FALSE,slice = N
   
   attr(fitstan,"family")<-c("family"=family)
   attr(fitstan,"paraname")<-c("paraname"=paraname)
-  attr(fitstan,"WAIC") <-c("WAIC"=waic2,"lppd"=lppd,"p_waic" = p_waic)#,"waic_random"=waic_r,"lppd_random"=lppd_r,"p_waic_random"=p_waic_r)
+  attr(fitstan,"WAIC") <-c("WAIC"=waic2,"lppd"=lppd,"p_waic" = p_waic)
+  if(family=="gaussian"||R==1){
+    attr(fitstan,"WAIC_g") <-c("WAIC_g"=waic2_g,"lppd_g"=lppd_g,"p_waic_g" = p_waic_g)
+  }
   attr(fitstan,"dataname") <- list("yname"=yname,"xname"=xname,"zname"=zname,"idname"=idname)
   attr(fitstan,"beta")<-list("beta"=beta)
   if(R>0){
@@ -910,9 +955,14 @@ glmmstan <- function(formula_str,data,family="gaussian",center = FALSE,slice = N
   if(checkslice>0){
     attr(fitstan,"simple")<-list("simple"=simple) 
   }
+  if(family=="gaussian"||R==1){
+    attr(fitstan,"global") <- TRUE
+  }else{
+    attr(fitstan,"global") <- FALSE
+  }
   
   outputwaic <- paste0("\nlppd = ",round(lppd,digits=4),"\npWAIC = ",round(p_waic,digits=4),
-                       "\nWAIC = ", round(waic2,digits=4))#,"\nWAIC_random = ", round(waic_r,digits=4))
+                       "\nWAIC = ", round(waic2,digits=4))
   cat(outputwaic)
   
   return(fitstan)
@@ -934,8 +984,12 @@ output_code <- function(fitstan){
 }
 
 output_result <- function(fitstan){
+  family <- attr(fitstan,"family")
   formula <- attr(fitstan,"formula")
   WAIC <- list("WAIC"=attr(fitstan,"WAIC"))
+  if(attr(fitstan,"global")==TRUE){
+    WAIC_g <- list("WAIC_g"=attr(fitstan,"WAIC_g"))
+  }
   beta <- attr(fitstan,"beta")
   simple <- attr(fitstan,"simple")
   tau_sd <- attr(fitstan,"tau_sd")
