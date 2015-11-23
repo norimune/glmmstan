@@ -705,39 +705,39 @@ glmmstan <- function(formula_str,data,family="gaussian",center = FALSE,slice = N
       temp3 <- paste0(temp3,"beta_binomial_log(y[n], bitotal[n], inv_logit(predict[n])*s, (1.0-inv_logit(predict[n]))*s)")
     }else if(family=="zipoisson"){
       if(checkoffset==0){
-        temp3 <- paste0("\t\tlog_lik[n] <- ")
         temp3 <- paste0("\t\tif(y[n]==0)\n")
-        temp3 <- paste0(temp3,"\t\t\tog_lik[n] <- log_sum_exp(bernoulli_log(1,theta),")
-        temp3 <- paste0(temp3,"bernoulli_log(0,theta)+ poisson_log(y[n],exp(predict[n])))\n")
-        temp3 <- paste0(temp3,"\t\telse(y[n]==1)\n")
-        temp3 <- paste0(temp3,"\t\t\tlog_lik[n] <-(bernoulli_log(0,theta)+ poisson_log(y[n],exp(predict[n])))\n")
+        temp3 <- paste0(temp3,"\t\t\tlog_lik[n] <- log_sum_exp(bernoulli_log(1,theta),")
+        temp3 <- paste0(temp3,"bernoulli_log(0,theta)+ poisson_log(y[n],exp(predict[n])));\n")
+        temp3 <- paste0(temp3,"\t\telse\n")
+        temp3 <- paste0(temp3,"\t\t\tlog_lik[n] <-(bernoulli_log(0,theta)+ poisson_log(y[n],exp(predict[n])));\n")
       }else{
-        temp3 <- paste0("\t\tlog_lik[n] <- ")
         temp3 <- paste0("\t\tif(y[n]==0)\n")
         temp3 <- paste0(temp3,"\t\t\tog_lik[n] <- log_sum_exp(bernoulli_log(1,theta),")
-        temp3 <- paste0(temp3,"bernoulli_log(0,theta)+ poisson_log(y[n],offset[n]*exp(predict[n])))\n")
-        temp3 <- paste0(temp3,"\t\telse(y[n]==1)\n")
-        temp3 <- paste0(temp3,"\t\t\tlog_lik[n] <-(bernoulli_log(0,theta)+ poisson_log(y[n],offset[n]*exp(predict[n])))\n")
+        temp3 <- paste0(temp3,"bernoulli_log(0,theta)+ poisson_log(y[n],offset[n]*exp(predict[n])));\n")
+        temp3 <- paste0(temp3,"\t\telse\n")
+        temp3 <- paste0(temp3,"\t\t\tlog_lik[n] <-(bernoulli_log(0,theta)+ poisson_log(y[n],offset[n]*exp(predict[n])));\n")
       }
     }else if(family=="zinbinomial"){
       if(checkoffset==0){
-        temp3 <- paste0("\t\tlog_lik[n] <- ")
         temp3 <- paste0("\t\tif(y[n]==0)\n")
-        temp3 <- paste0(temp3,"\t\t\tog_lik[n] <- log_sum_exp(bernoulli_log(1,theta),")
-        temp3 <- paste0(temp3,"bernoulli_log(0,theta)+ neg_binomial_2_log(y[n],exp(predict[n])))\n")
-        temp3 <- paste0(temp3,"\t\telse(y[n]==1)\n")
-        temp3 <- paste0(temp3,"\t\t\tlog_lik[n] <-(bernoulli_log(0,theta)+ neg_binomial_2_log(y[n],exp(predict[n],s)))\n")
+        temp3 <- paste0(temp3,"\t\t\tlog_lik[n] <- log_sum_exp(bernoulli_log(1,theta),")
+        temp3 <- paste0(temp3,"bernoulli_log(0,theta)+ neg_binomial_2_log(y[n],exp(predict[n])));\n")
+        temp3 <- paste0(temp3,"\t\telse\n")
+        temp3 <- paste0(temp3,"\t\t\tlog_lik[n] <-(bernoulli_log(0,theta)+ neg_binomial_2_log(y[n],exp(predict[n],s)));\n")
       }else{
-        temp3 <- paste0("\t\tlog_lik[n] <- ")
         temp3 <- paste0("\t\tif(y[n]==0)\n")
-        temp3 <- paste0(temp3,"\t\t\tog_lik[n] <- log_sum_exp(bernoulli_log(1,theta),")
-        temp3 <- paste0(temp3,"bernoulli_log(0,theta)+ neg_binomial_2_log(y[n],offset[n]*exp(predict[n],s)))\n")
-        temp3 <- paste0(temp3,"\t\telse(y[n]==1)\n")
-        temp3 <- paste0(temp3,"\t\t\tlog_lik[n] <-(bernoulli_log(0,theta)+ neg_binomial_2_log(y[n],offset[n]*exp(predict[n],s)))\n")
+        temp3 <- paste0(temp3,"\t\t\tlog_lik[n] <- log_sum_exp(bernoulli_log(1,theta),")
+        temp3 <- paste0(temp3,"bernoulli_log(0,theta)+ neg_binomial_2_log(y[n],offset[n]*exp(predict[n],s)));\n")
+        temp3 <- paste0(temp3,"\t\telse\n")
+        temp3 <- paste0(temp3,"\t\t\tlog_lik[n] <-(bernoulli_log(0,theta)+ neg_binomial_2_log(y[n],offset[n]*exp(predict[n],s)));\n")
       }
     }
-    temp3 <- paste0(temp3,";\n\t}\n")
-        
+    if(family=="zipoisson" ||family=="zinbinomial"){
+      temp3 <- paste0(temp3,"\n\t}\n")
+    }else{
+      temp3 <- paste0(temp3,";\n\t}\n")
+    }
+    
     if(checkslice>0){
       for(i in 1:checkslice){
         temp3 <- paste0(temp3,"\tsimple",i,"_high <- beta[",simplenum[i],"]+beta[",intrctnum[i],"]*",round(slicesd,digits=4),";\n")
