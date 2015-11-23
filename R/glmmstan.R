@@ -650,9 +650,11 @@ glmmstan <- function(formula_str,data,family="gaussian",center = FALSE,slice = N
     }else if(family=="betabinomial"){
       temp2 <- paste0(temp2,"y ~ beta_binomial(bitotal, A, B);\n")
     }else if(family=="zipoisson" || family == "zinbinomial"){
-      
     }
-    temp2 <- paste0(temp2,";\n") 
+    if(family=="zipoisson" || family == "zinbinomial"){
+    }else{
+      temp2 <- paste0(temp2,";\n") 
+    }
     
     model_code <- paste0(model_code,temp3,temp1,temp2,"}")
     
@@ -721,7 +723,7 @@ glmmstan <- function(formula_str,data,family="gaussian",center = FALSE,slice = N
       if(checkoffset==0){
         temp3 <- paste0("\t\tif(y[n]==0)\n")
         temp3 <- paste0(temp3,"\t\t\tlog_lik[n] <- log_sum_exp(bernoulli_log(1,theta),")
-        temp3 <- paste0(temp3,"bernoulli_log(0,theta)+ neg_binomial_2_log(y[n],exp(predict[n])));\n")
+        temp3 <- paste0(temp3,"bernoulli_log(0,theta)+ neg_binomial_2_log(y[n],exp(predict[n],s)));\n")
         temp3 <- paste0(temp3,"\t\telse\n")
         temp3 <- paste0(temp3,"\t\t\tlog_lik[n] <-(bernoulli_log(0,theta)+ neg_binomial_2_log(y[n],exp(predict[n],s)));\n")
       }else{
