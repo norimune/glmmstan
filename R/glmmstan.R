@@ -145,7 +145,7 @@ glmmstan <- function(formula_str,data,family="gaussian",center = FALSE,slice = N
   
   if(family=="gaussian" || family=="binomial" || family=="poisson" || family=="gamma" || family=="beta"
        || family=="nbinomial" || family=="ordered" || family=="bernoulli" || family=="lognormal" 
-       || family=="betabinomial" || "zipoisson" || "zinbinomial"){
+       || family=="betabinomial" || family=="zipoisson" || family=="zinbinomial"){
     
   }else{
     stop(paste0("Input family type(",family,") is incorrect."))
