@@ -13,7 +13,7 @@ glmmstan <- function(formula_str,data,family="gaussian",center = FALSE,slice = N
   #formula...Model formula. Using "glmer" notation.
   #data...Data.frame or list.
   #family...Model family name for outcome.
-  #         Valid choices:gaussian,bernoulli,binomial,poisson,nbinomial,gamma,lognormal,beta,ordered.
+  #         Valid choices:gaussian,bernoulli,binomial,poisson,nbinomial,gamma,lognormal,beta,ordered,beta-binomial.
   #center...If TRUE, xvalue are centered from grand means.
   #slice...Slice variable name.Simple slope effects are estimated.
   #offset...Offset vaiable name.
@@ -139,9 +139,11 @@ glmmstan <- function(formula_str,data,family="gaussian",center = FALSE,slice = N
   if(family=="normal") family <- "gaussian"
   if(family=="Gamma") family <- "gamma"
   if(family=="negative binomial") family <- "nbinomial"
+  if(family=="neg_binomial") family <- "nbinomial"
+  if(family=="beta_binomial") family <- "betabinomial"
   
   if(family=="gaussian" || family=="binomial" || family=="poisson" || family=="gamma" || family=="beta"
-       || family=="nbinomial" || family=="ordered" || family=="bernoulli" || family=="lognormal"){
+       || family=="nbinomial" || family=="ordered" || family=="bernoulli" || family=="lognormal" || family=="betabinomial"){
     
   }else{
     stop(paste0("Input family type(",family,") is incorrect."))
@@ -328,6 +330,7 @@ glmmstan <- function(formula_str,data,family="gaussian",center = FALSE,slice = N
     datname <- c(yname,xname)
     if(R>0) for(i in 1:R) datname <- c(datname,idname[i],zname[[i]])
     if(family=="binomial" && totalname!="null") datname <- c(datname,totalname)
+    if(family=="betabinomial" && totalname!="null") datname <- c(datname,totalname)
     if(checkoffset==1) datname <- c(datname,offset)
     
     dat3 <- na.omit(subset(dat2,select=unique(datname)))
@@ -358,9 +361,9 @@ glmmstan <- function(formula_str,data,family="gaussian",center = FALSE,slice = N
       G <- c(0,0,0,0)
     }
     N <- nrow(dat3)
-    if(family=="binomial" && totalname !="null"){
+    if((family=="binomial"|| family=="betabinomial") && totalname !="null"){
       bitotal <- dat3[yname][,] + dat3[,totalname]
-    }else if(family=="binomial"){
+    }else if(family=="binomial" || family=="betabinomial"){
       dat3$bitotal <- max(y)
       bitotal <- dat3$bitotal
     }
@@ -385,7 +388,7 @@ glmmstan <- function(formula_str,data,family="gaussian",center = FALSE,slice = N
         datastan[id2name[i]] <- list(id[[i]])
       }
     }
-    if(family=="binomial") datastan$bitotal <- bitotal
+    if(family=="binomial"|| family=="betabinomial") datastan$bitotal <- bitotal
     if(family=="ordered") datastan$K <- K
     if(checkoffset==1) datastan$offset <- offsetdata[,]  
     if(checkslice>0) slicesd <- sd(dat3[slice][,])
@@ -416,7 +419,7 @@ glmmstan <- function(formula_str,data,family="gaussian",center = FALSE,slice = N
       temp1 <- ("\treal y[N];\n")
     }else if(family=="gamma" || family=="lognormal"){
       temp1 <- ("\treal<lower=0> y[N];\n")
-    }else if(family=="bernoulli" ||family=="binomial" || family=="poisson"|| family=="ordered" || family=="nbinomial"){
+    }else if(family=="bernoulli" ||family=="binomial" || family=="poisson"|| family=="ordered" || family=="nbinomial"|| family=="betabinomial"){
       temp1 <- ("\tint<lower=0> y[N];\n")
     }else if(family=="beta" ){
       temp1 <- ("\treal<lower=0,upper=1> y[N];\n")
@@ -484,7 +487,7 @@ glmmstan <- function(formula_str,data,family="gaussian",center = FALSE,slice = N
       }
     }
     temp3 <- ''
-    if(family == "gaussian" || family == "gamma" || family=="nbinomial" || family=="lognormal" || family=="beta"){
+    if(family == "gaussian" || family == "gamma" || family=="nbinomial" || family=="lognormal" || family=="beta"|| family=="betabinomial"){
       temp3 <- paste0("\t","real<lower=0> s;\n")
     }
     if(family=="ordered"){
@@ -495,7 +498,7 @@ glmmstan <- function(formula_str,data,family="gaussian",center = FALSE,slice = N
     ###transformed parameters
     tp_code <-'\ntransformed parameters{\n'
     temp1 <-''
-    if(family == "gaussian" || family == "gamma" || family=="nbinomial" || family=="lognormal" || family=="beta"){
+    if(family == "gaussian" || family == "gamma" || family=="nbinomial" || family=="lognormal" || family=="beta")|| family=="betabinomial"){
       temp1 <- paste0(temp1,"\t","real<lower=0> scale;\n")
     }
     temp2 <- ''
@@ -517,7 +520,7 @@ glmmstan <- function(formula_str,data,family="gaussian",center = FALSE,slice = N
       temp3 <- paste0(temp3,"\tscale <- s^2;\n")
     }else if(family == "nbinomial"){
       temp3 <- paste0(temp3,"\tscale <- 1/s;\n")
-    }else if(family == "beta"){
+    }else if(family == "beta"|| family=="betabinomial"){
       temp3 <- paste0(temp3,"\tscale <- s;\n")
     } 
     temp4 <- ''
@@ -534,7 +537,7 @@ glmmstan <- function(formula_str,data,family="gaussian",center = FALSE,slice = N
     tp_code <- paste0(tp_code,temp1,temp2,temp3,temp4,"}")
     
     ###model
-    if(family!="beta"){
+    if(family!="beta" && family!="betabinomial"){
       model_code <-'\nmodel{\n\treal predict[N];\n\tbeta ~ normal(0,1000);\n'
     }else{
       model_code <-'\nmodel{\n\treal predict[N];\n\treal A[N];\n\treal B[N];\n\tbeta ~ normal(0,1000);\n'
@@ -589,7 +592,7 @@ glmmstan <- function(formula_str,data,family="gaussian",center = FALSE,slice = N
       
     }else if(family=="nbinomial" && checkoffset == 1){
       temp1 <- paste0(temp1,"\t\tpredict[n] <- log(offset[n])+predict[n];\n")
-    }else if(family=="beta"){
+    }else if(family=="beta"|| family=="betabinomial"){
       temp1 <- paste0(temp1,"\t\tpredict[n] <- inv_logit(predict[n]);\n")
       temp1 <- paste0(temp1,"\t\tA[n] <- predict[n]*s;\n")
       temp1 <- paste0(temp1,"\t\tB[n] <- (1.0-predict[n])*s;\n")
@@ -615,6 +618,8 @@ glmmstan <- function(formula_str,data,family="gaussian",center = FALSE,slice = N
       temp2 <- paste0(temp2,"y ~ neg_binomial_2_log(predict,s)")
     }else if(family=="beta"){
       temp2 <- paste0(temp2,"y ~ beta(A, B);\n")
+    }else if(family=="betabinomial"){
+      temp2 <- paste0(temp2,"y ~ beta_binomial(bitotal, A, B);\n")
     }
     temp2 <- paste0(temp2,";\n") 
     
@@ -665,6 +670,8 @@ glmmstan <- function(formula_str,data,family="gaussian",center = FALSE,slice = N
       }
     }else if(family=="beta"){
       temp3 <- paste0(temp3,"beta_log(y[n], inv_logit(predict[n])*s, (1.0-inv_logit(predict[n]))*s)")
+    }else if(family=="betabinomial"){
+      temp3 <- paste0(temp3,"beta_binomial_log(y[n], bitotal[n], inv_logit(predict[n])*s, (1.0-inv_logit(predict[n]))*s)")
     }
     temp3 <- paste0(temp3,";\n\t}\n")
         
