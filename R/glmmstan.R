@@ -649,7 +649,7 @@ glmmstan <- function(formula_str,data,family="gaussian",center = FALSE,slice = N
       temp2 <- paste0(temp2,"y ~ beta(A, B);\n")
     }else if(family=="betabinomial"){
       temp2 <- paste0(temp2,"y ~ beta_binomial(bitotal, A, B);\n")
-    }else if(family=="zipoisson" || family = "zinbinomial"){
+    }else if(family=="zipoisson" || family == "zinbinomial"){
       
     }
     temp2 <- paste0(temp2,";\n") 
