@@ -410,7 +410,7 @@ glmmstan <- function(formula_str,data,family="gaussian",center = FALSE,slice = N
     if(R>0){
       data_code <- paste0(data_code,"\tint<lower=1> R;\n\tint<lower=1> G[R];\n\tint<lower=1> Q[R];\n" )
     }
-    if(family=="binomial") data_code <- paste0(data_code,"\tint<lower=1> bitotal[N];\n" )
+    if(family=="binomial" || family=="betabinomial") data_code <- paste0(data_code,"\tint<lower=1> bitotal[N];\n" )
     if(family=="ordered") data_code <- paste0(data_code,"\tint<lower=2> K;\n" )
     if(checkoffset==1) data_code <- paste0(data_code,"\treal offset[N];\n" )
       
