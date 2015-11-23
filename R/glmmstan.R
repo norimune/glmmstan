@@ -997,9 +997,9 @@ glmmstan <- function(formula_str,data,family="gaussian",center = FALSE,slice = N
   if(family=="gaussian" ||family=="gamma"|| family=="nbinomial"||family=="lognormal"){
     paraname <- c(paraname,"scale")
   }
-  if(family="zipoisson"||family="zinbinomial"){
+  if(family=="zipoisson"||family=="zinbinomial"){
     paraname <- c(paraname,"theta")
-    if(family="zipoisson"||family="zinbinomial"){
+    if(family=="zipoisson"||family=="zinbinomial"){
       paraname <- c(paraname,"scale")
     }  
   }
