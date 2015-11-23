@@ -498,7 +498,7 @@ glmmstan <- function(formula_str,data,family="gaussian",center = FALSE,slice = N
     ###transformed parameters
     tp_code <-'\ntransformed parameters{\n'
     temp1 <-''
-    if(family == "gaussian" || family == "gamma" || family=="nbinomial" || family=="lognormal" || family=="beta")|| family=="betabinomial"){
+    if(family == "gaussian" || family == "gamma" || family=="nbinomial" || family=="lognormal" || family=="beta" || family=="betabinomial"){
       temp1 <- paste0(temp1,"\t","real<lower=0> scale;\n")
     }
     temp2 <- ''
