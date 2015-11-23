@@ -901,13 +901,12 @@ glmmstan <- function(formula_str,data,family="gaussian",center = FALSE,slice = N
     s <- rstan::extract(fitstan,"theta")$theta
     theta <- matrix(c(mean(s),sd(s),quantile(s,0.025),quantile(s,0.975)),ncol=4)
     rownames(theta) <- "theta"
+    beta <- rbind(beta_com,theta)
     if(family=="zinbinomial"){
       s <- rstan::extract(fitstan,"scale")$scale
       scale <- matrix(c(mean(s),sd(s),quantile(s,0.025),quantile(s,0.975)),ncol=4)
       rownames(scale) <- "scale"
-      beta <- rbind(beta_com,theta,scale)
-    }else{
-      beta <- rbind(beta_com,theta)
+      beta <- rbind(beta,scale)
     }
   }else{
     beta <- beta_com
