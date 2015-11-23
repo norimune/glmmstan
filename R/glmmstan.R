@@ -884,7 +884,7 @@ glmmstan <- function(formula_str,data,family="gaussian",center = FALSE,slice = N
   beta_com <- matrix(c(apply(beta,2,mean),apply(beta,2,sd),apply(beta,2,quantile,0.025),apply(beta,2,quantile,0.975)),ncol=4)
   rownames(beta_com) <- colnames(x)
   colnames(beta_com) <- c("coefficient","stdev","95%lower","95%upper")
-  if(family=="gaussian" ||family=="gamma"|| family=="nbinomial" || family=="lognormal" || family=="beta" || family=="betabinomial"|| family=="zinbinomial"){
+  if(family=="gaussian" ||family=="gamma"|| family=="nbinomial" || family=="lognormal" || family=="beta" || family=="betabinomial"){
     s <- rstan::extract(fitstan,"scale")$scale
     scale <- matrix(c(mean(s),sd(s),quantile(s,0.025),quantile(s,0.975)),ncol=4)
     rownames(scale) <- "scale"
