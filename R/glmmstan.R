@@ -656,6 +656,7 @@ glmmstan <- function(formula_str,data,family="gaussian",center = FALSE,slice = N
     }else if(family=="zipoisson" || family == "zinbinomial"){
     }
     if(family=="zipoisson" || family == "zinbinomial"){
+      temp2 <-''
     }else{
       temp2 <- paste0(temp2,";\n") 
     }
@@ -739,7 +740,7 @@ glmmstan <- function(formula_str,data,family="gaussian",center = FALSE,slice = N
       }
     }
     if(family=="zipoisson" ||family=="zinbinomial"){
-      temp3 <- paste0(temp3,"}\n")
+      temp3 <- paste0(temp3,"\t}\n")
     }else{
       temp3 <- paste0(temp3,";\n\t}\n")
     }
