@@ -1179,6 +1179,39 @@ Pglmmstan <- function(formula_str,data,family="gaussian",center = FALSE,slice = 
            parallel=TRUE,cores=cores,iter=iter,warmup = warmup,chains= chains,thin=thin)
 }
 
+Cglmmstan <- function(formula_str,data,family="gaussian",center = FALSE,slice = NULL,offset=NULL,                     
+                      codeonly=TRUE,dataonly=FALSE,modelonly=FALSE,cauchy = 2.5,lkj_corr = 2,
+                      stancode=NULL,standata=NULL,stanmodel=NULL,stanfile=NULL,stanfit=NULL,
+                      parallel=FALSE,cores=NULL,iter=2000,warmup = NULL,chains= 2,thin=1){
+  
+  glmmstan(formula_str,data,family=family,center = center,slice = slice,offset=offset,                     
+           codeonly=codeonly,dataonly=dataonly,modelonly=modelonly,cauchy = cauchy,lkj_corr = lkj_corr,
+           stancode=stancode,standata=standata,stanmodel=stanmodel,stanfile=stanfile,stanfit=stanfit,
+           parallel=FALSE,cores=cores,iter=iter,warmup = warmup,chains= chains,thin=thin)
+}
+
+Mglmmstan <- function(formula_str,data,family="gaussian",center = FALSE,slice = NULL,offset=NULL,                     
+                     codeonly=FALSE,dataonly=FALSE,modelonly=TRUE,cauchy = 2.5,lkj_corr = 2,
+                     stancode=NULL,standata=NULL,stanmodel=NULL,stanfile=NULL,stanfit=NULL,
+                     parallel=FALSE,cores=NULL,iter=2000,warmup = NULL,chains= 2,thin=1){
+  
+  glmmstan(formula_str,data,family=family,center = center,slice = slice,offset=offset,                     
+           codeonly=codeonly,dataonly=dataonly,modelonly=modelonly,cauchy = cauchy,lkj_corr = lkj_corr,
+           stancode=stancode,standata=standata,stanmodel=stanmodel,stanfile=stanfile,stanfit=stanfit,
+           parallel=FALSE,cores=cores,iter=iter,warmup = warmup,chains= chains,thin=thin)
+}
+
+Dglmmstan <- function(formula_str,data,family="gaussian",center = FALSE,slice = NULL,offset=NULL,                     
+                      codeonly=FALSE,dataonly=TRUE,modelonly=FALSE,cauchy = 2.5,lkj_corr = 2,
+                      stancode=NULL,standata=NULL,stanmodel=NULL,stanfile=NULL,stanfit=NULL,
+                      parallel=FALSE,cores=NULL,iter=2000,warmup = NULL,chains= 2,thin=1){
+  
+  glmmstan(formula_str,data,family=family,center = center,slice = slice,offset=offset,                     
+           codeonly=codeonly,dataonly=dataonly,modelonly=modelonly,cauchy = cauchy,lkj_corr = lkj_corr,
+           stancode=stancode,standata=standata,stanmodel=stanmodel,stanfile=stanfile,stanfit=stanfit,
+           parallel=FALSE,cores=cores,iter=iter,warmup = warmup,chains= chains,thin=thin)
+}
+
 map_mcmc <- function(z){
   density(z)$x[which.max(density(z)$y)]
 }
