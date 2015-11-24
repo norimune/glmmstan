@@ -506,7 +506,8 @@ glmmstan <- function(formula_str,data,family="gaussian",center = FALSE,slice = N
     ###transformed parameters
     tp_code <-'\ntransformed parameters{\n'
     temp1 <-''
-    if(family == "gaussian" || family == "gamma" || family=="nbinomial" || family=="lognormal" || family=="beta" || family=="betabinomial" || family=="zinbinomial"){
+    if(family == "gaussian" || family == "gamma" || family=="nbinomial" || family=="lognormal" || family=="beta" 
+       || family=="betabinomial" || family=="zinbinomial"|| family=="zigamma"){
       temp1 <- paste0(temp1,"\t","real<lower=0> scale;\n")
     }
     temp2 <- ''
@@ -616,9 +617,9 @@ glmmstan <- function(formula_str,data,family="gaussian",center = FALSE,slice = N
       }
       temp1 <- paste0(temp1,"\t\tif(y[n]==0)\n")
       temp1 <- paste0(temp1,"\t\t\tincrement_log_prob(log_sum_exp(bernoulli_log(1,inv_logit(theta)),\n")
-      temp1 <- paste0(temp1,"\t\t\tbernoulli_log(0,inv_logit(theta))+ poisson_log(y[n],predict[n])));\n")
+      temp1 <- paste0(temp1,"\t\t\tbernoulli_log(0,inv_logit(theta))+poisson_log(y[n],predict[n])));\n")
       temp1 <- paste0(temp1,"\t\telse\n")
-      temp1 <- paste0(temp1,"\t\t\tincrement_log_prob(bernoulli_log(0,inv_logit(theta))+ poisson_log(y[n],predict[n]));\n")
+      temp1 <- paste0(temp1,"\t\t\tincrement_log_prob(bernoulli_log(0,inv_logit(theta))+poisson_log(y[n],predict[n]));\n")
     }else if(family=="zinbinomial"){
       if(checkoffset==0){
         temp1 <- paste0(temp1,"\t\tpredict[n] <- exp(predict[n]);\n")
@@ -627,16 +628,16 @@ glmmstan <- function(formula_str,data,family="gaussian",center = FALSE,slice = N
       }
       temp1 <- paste0(temp1,"\t\tif(y[n]==0)\n")
       temp1 <- paste0(temp1,"\t\t\tincrement_log_prob(log_sum_exp(bernoulli_log(1,inv_logit(theta)),\n")
-      temp1 <- paste0(temp1,"\t\t\tbernoulli_log(0,inv_logit(theta))+ neg_binomial_2_log(y[n],predict[n],s)));\n")
+      temp1 <- paste0(temp1,"\t\t\tbernoulli_log(0,inv_logit(theta))+neg_binomial_2_log(y[n],predict[n],s)));\n")
       temp1 <- paste0(temp1,"\t\telse\n")
-      temp1 <- paste0(temp1,"\t\t\tincrement_log_prob(bernoulli_log(0,inv_logit(theta))+ neg_binomial_2_log(y[n],predict[n],s));\n")
+      temp1 <- paste0(temp1,"\t\t\tincrement_log_prob(bernoulli_log(0,inv_logit(theta))+neg_binomial_2_log(y[n],predict[n],s));\n")
     }else if(family=="zigamma"){
       temp1 <- paste0(temp1,"\t\tpredict[n] <- s / exp(predict[n]);\n")
       temp1 <- paste0(temp1,"\t\tif(y[n]==0)\n")
       temp1 <- paste0(temp1,"\t\t\tincrement_log_prob(log_sum_exp(bernoulli_log(1,inv_logit(theta)),\n")
-      temp1 <- paste0(temp1,"\t\t\tbernoulli_log(0,inv_logit(theta))+ gamma_log(y[n],s,predict)));\n")
+      temp1 <- paste0(temp1,"\t\t\tbernoulli_log(0,inv_logit(theta))+gamma_log(y[n],s,predict)));\n")
       temp1 <- paste0(temp1,"\t\telse\n")
-      temp1 <- paste0(temp1,"\t\t\tincrement_log_prob(bernoulli_log(0,inv_logit(theta))+ gamma_log(y[n],s,predict));\n")
+      temp1 <- paste0(temp1,"\t\t\tincrement_log_prob(bernoulli_log(0,inv_logit(theta))+gamma_log(y[n],s,predict));\n")
       
     }
     temp1 <-paste0(temp1,"\t}\n")
