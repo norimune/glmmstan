@@ -739,7 +739,7 @@ glmmstan <- function(formula_str,data,family="gaussian",center = FALSE,slice = N
       }
     }
     if(family=="zipoisson" ||family=="zinbinomial"){
-      temp3 <- paste0(temp3,"\t}\n")
+      temp3 <- paste0(temp3,"}\n")
     }else{
       temp3 <- paste0(temp3,";\n\t}\n")
     }
