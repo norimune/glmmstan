@@ -2,6 +2,7 @@
 .Rhistory
 .RData
 .Rprofile
+.Rproj
 .exe.stackdump
 bash.exe.stackdump
 sh.exe.stackdump
