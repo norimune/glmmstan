@@ -1,5 +1,5 @@
 # glmmstan
-Using standard formula notation from \code{glmer} (\code{lme4}), defines a Stan model (\code{rstan}) and optionally samples from the posterior. Can optionally compute WAIC. Supports model families: "gaussian", "binomial", "poisson", "negative binomial", "beta", "gamma", "lognormal", "beta-binomial", "ordered",and "zero-inflated poisson, negative binomial and gamma". 
+Using standard formula notation from `glmer` (`{lme4}`), defines a Stan model (`{rstan}`) and optionally samples from the posterior. Can optionally compute WAIC. Supports model families: "gaussian", "binomial", "poisson", "negative binomial", "beta", "gamma", "lognormal", "beta-binomial", "ordered",and "zero-inflated poisson, negative binomial and gamma". 
 
 ## Install
 If you have not install `RStan`, please read [RStan document](https://github.com/stan-dev/rstan/wiki/RStan-Getting-Started) and install it.
