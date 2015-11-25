@@ -550,7 +550,7 @@ glmmstan <- function(formula_str,data,family="gaussian",center = FALSE,slice = N
     
     ###model
     if(family=="beta" || family=="betabinomial"){
-      model_code <-'\nmodel{{\n\treal predict[N];\n\treal A[N];\n\treal B[N];\n\tbeta ~ normal(0,1000);\n'
+      model_code <-'\nmodel{{\n\treal predict[N];\n\treal A[N];\n\treal B[N];\n\tbeta ~ normal(0,100);\n'
     }else if(family=="zipoisson" || family=="zinbinomial"|| family=="zigamma"){
       model_code <-'\nmodel{{\n\treal predict[N];\n\treal theta[N];\n\tbeta ~ normal(0,100);\n\tbeta_zero ~ normal(0,100);\n'
     }else{
@@ -610,10 +610,14 @@ glmmstan <- function(formula_str,data,family="gaussian",center = FALSE,slice = N
       
     }else if((family=="nbinomial") && checkoffset == 1){
       temp1 <- paste0(temp1,"\t\tpredict[n] <- log(offset[n])+predict[n];\n")
-    }else if(family=="beta"|| family=="betabinomial"){
+    }else if(family=="beta"){
       temp1 <- paste0(temp1,"\t\tpredict[n] <- inv_logit(predict[n]);\n")
       temp1 <- paste0(temp1,"\t\tA[n] <- predict[n]*s;\n")
       temp1 <- paste0(temp1,"\t\tB[n] <- (1.0-predict[n])*s;\n")
+    }else if(family=="betabinomial"){
+      temp1 <- paste0(temp1,"\t\tpredict[n] <- inv_logit(predict[n]);\n")
+      temp1 <- paste0(temp1,"\t\tA[n] <- predict[n]/s;\n")
+      temp1 <- paste0(temp1,"\t\tB[n] <- (1.0-predict[n])/s;\n")
     }else if(family=="zipoisson"){
       if(checkoffset==0){
         temp1 <- paste0(temp1,"\t\tpredict[n] <- exp(predict[n]);\n")
@@ -684,6 +688,8 @@ glmmstan <- function(formula_str,data,family="gaussian",center = FALSE,slice = N
     gq_code <- paste0(gq_code,"{\n\treal predict[N];\n")
     if(family=="zipoisson"||family=="zinbinomial"||family=="zigamma"){
       gq_code <- paste0(gq_code,"\treal theta[N];\n")
+    }else if(family=="beta"||family=="betabinomial"){
+      gq_code <- paste0(gq_code,"\treal A[N];\n\treal B[N];\n")
     }
     temp1 <- ''
     if(checkslice>0){
@@ -713,10 +719,14 @@ glmmstan <- function(formula_str,data,family="gaussian",center = FALSE,slice = N
       
     }else if((family=="nbinomial"||family=="zipnbinomial") && checkoffset == 1){
       temp2 <- paste0(temp2,"\t\tpredict[n] <- log(offset[n])+predict[n];\n")
-    }else if(family=="beta"|| family=="betabinomial"){
+    }else if(family=="beta"){
       temp2 <- paste0(temp2,"\t\tpredict[n] <- inv_logit(predict[n]);\n")
       temp2 <- paste0(temp2,"\t\tA[n] <- predict[n]*s;\n")
       temp2 <- paste0(temp2,"\t\tB[n] <- (1.0-predict[n])*s;\n")
+    }else if(family=="betabinomial"){
+      temp2 <- paste0(temp2,"\t\tpredict[n] <- inv_logit(predict[n]);\n")
+      temp2 <- paste0(temp2,"\t\tA[n] <- predict[n]/s;\n")
+      temp2 <- paste0(temp2,"\t\tB[n] <- (1.0-predict[n])/s;\n")
     }
     if(family=="zipoisson"||family=="zinbinomial"||family=="zigamma"){
       temp2 <- paste0(temp2,"\t\ttheta[n] <- x[n]*beta_zero;\n")
@@ -732,7 +742,7 @@ glmmstan <- function(formula_str,data,family="gaussian",center = FALSE,slice = N
     }else if(family=="poisson"){
       temp3 <- paste0(temp3,"poisson_log(y[n], predict[n])")
     }else if(family=="gamma"){
-      temp3 <- paste0(temp3,"gamma_log(y[n], s, s/exp(predict[n]))")
+      temp3 <- paste0(temp3,"gamma_log(y[n], s, predict[n])")
     }else if(family=="lognormal"){
       temp3 <- paste0(temp3,"lognormal_log(y[n], predict[n],s)")
     }else if(family=="ordered"){
