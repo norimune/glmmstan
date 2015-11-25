@@ -2,7 +2,7 @@
 \alias{glmmstan}
 \title{Generalized liner mixed model in Rstan using glmer-style formulas}
 \description{
-  Using standard formula notation from \code{glmer} (\code{lme4}), defines a Stan model (\code{rstan}) and optionally samples from the posterior. Can optionally compute WAIC. Supports model families: "gaussian", "binomial", "poisson", "negative binomial", "beta", "gamma", "lognormal" and "ordered". 
+  Using standard formula notation from \code{glmer} (\code{lme4}), defines a Stan model (\code{rstan}) and optionally samples from the posterior. Can optionally compute WAIC. Supports model families: "gaussian", "binomial", "poisson", "negative binomial", "beta", "gamma", "lognormal", "beta-binomial", "ordered",and "zero-inflated poisson, negative binomial and gamma". 
 }
 \usage{
 glmmstan(formula_str, data, family="gaussian",
@@ -16,7 +16,7 @@ glmmstan(formula_str, data, family="gaussian",
 \arguments{
   \item{formula_str}{Model formula or list of formulas, using \code{\link{glmer}} notation for varying effects.}
   \item{data}{Data frame or list.}
-  \item{family}{Model family name or list of names for outcome(s). Valid choices are: "gaussian", "binomial" (logit link), "poisson" (log link), "nbinomial" (log link),"gamma" (log link), "beta" (logitlinks), "lognormal" (log link),"ordered" (cumulative logit).}
+  \item{family}{Model family name or list of names for outcome(s). Valid choices are: "gaussian", "binomial" (logit link), "poisson" (log link), "nbinomial" (log link),"gamma" (log link), "beta" (logitlinks), "lognormal" (log link),"ordered" (cumulative logit),"beta-binomial"(logit link),"zipoisson"(log link),"zinbinomial"(log link),"zigamma"(log link).}
   \item{center}{If TRUE, center the independent variables(set means=0).}
   \item{offset}{Input offset term in model(only "poisson","nbinomial").}
   \item{codeonly}{If TRUE, output only stan code.}
